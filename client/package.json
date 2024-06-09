@@ -13,6 +13,7 @@
     "@langchain/google-genai": "^0.0.17",
     "@langchain/textsplitters": "^0.0.3",
     "@supabase/supabase-js": "^2.43.4",
+    "@vercel/blob": "^0.23.3",
     "ai": "^3.1.30",
     "axios": "^1.7.2",
     "date-fns": "^3.6.0",

@@ -9,6 +9,7 @@
  */
 
   import getChunkedDocsFromPDF from "../../../../lib/utilis/Pdfloader"
+
 import { NextRequest, NextResponse } from "next/server";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
@@ -16,6 +17,9 @@ import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { TaskType } from "@google/generative-ai";
 import { writeFile } from "fs/promises";
+import { downloadFromURL } from "../../../../lib/utilis/DownloadFromVercel";
+
+import { put } from "@vercel/blob";
 import path from "path";
 export const runtime = "nodejs";
 // export const config = {
@@ -34,23 +38,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const filename =  file.name.replaceAll(" ", "_");
-    const filePath = path.join(process.cwd(), "public/assets", filename);
-    console.log(filename,filePath);
-    try {
-      await writeFile(
-        filePath,
-        buffer
-      );
-      // return NextResponse.json({ Message: "Success", status: 201 });
-    } catch (error) {
-      console.log("Error occured ", error);
-      return NextResponse.json({ Message: "Failed", status: 500 });
-    }
+    const blob  = await put(file.name, file, { access: 'public' });
+    console.log(blob);
+    const localFilePath = await downloadFromURL(blob.url);
+    // return NextResponse.json({ ok: true, url: blob.url }, { status: 200 });
+
+    // const buffer = Buffer.from(await file.arrayBuffer());
+    // const filename =  file.name.replaceAll(" ", "_");
+    // const filePath = path.join(process.cwd(), "public/assets", filename);
+    // console.log(filename,filePath);
+    // try {
+    //   await writeFile(
+    //     filePath,
+    //     buffer
+    //   );
+    //   // return NextResponse.json({ Message: "Success", status: 201 });
+    // } catch (error) {
+    //   console.log("Error occured ", error);
+    //   return NextResponse.json({ Message: "Failed", status: 500 });
+    // }
 
 
-    const fileContent = await getChunkedDocsFromPDF( filePath)
+    const fileContent = await getChunkedDocsFromPDF( localFilePath)
     console.log("File Content:", fileContent);
 
 

@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useChat } from "ai/react";
-import { useRef, useState, ReactElement } from "react";
+import { useRef, useState, ReactElement,useEffect } from "react";
 import type { FormEvent } from "react";
 
 import { ChatMessageBubble } from "./ChatMessageBubble";
@@ -14,7 +14,7 @@ import type { AgentStep } from 'langchain/agents';
 
 export default function ChatWindow(props: {
   endpoint: string,
-  emptyStateComponent: ReactElement,
+  emptyStateComponent?: ReactElement,
   placeholder?: string,
   titleText?: string,
   emoji?: string;
@@ -56,25 +56,36 @@ export default function ChatWindow(props: {
       }
     });
 
-  async function sendMessage(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (messageContainerRef.current) {
-      messageContainerRef.current.classList.add("grow");
-    }
-    if (!messages.length) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
-    if (chatEndpointIsLoading ?? intermediateStepsLoading) {
-      return;
-    }
-    if (!showIntermediateSteps) {
-      handleSubmit(e);
-    // Some extra work to show intermediate steps properly
-    } else {
+    async function sendMessage(e: FormEvent<HTMLFormElement>) {
+      e.preventDefault();
+      
+      if (messageContainerRef.current) {
+        messageContainerRef.current.classList.add("grow");
+      }
+    
+      if (!messages.length) {
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+    
+      if (chatEndpointIsLoading || intermediateStepsLoading) {
+        return;
+      }
+    
+      if (!showIntermediateSteps) {
+        handleSubmit(e);
+        return;
+      } 
+    
       setIntermediateStepsLoading(true);
       setInput("");
+      
       const messagesWithUserReply = messages.concat({ id: messages.length.toString(), content: input, role: "user" });
       setMessages(messagesWithUserReply);
+    
+      if (messageContainerRef.current) {
+        messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+      }
+    
       const response = await fetch(endpoint, {
         method: "POST",
         body: JSON.stringify({
@@ -82,37 +93,53 @@ export default function ChatWindow(props: {
           show_intermediate_steps: true
         })
       });
+    
       const json = await response.json();
       setIntermediateStepsLoading(false);
+    
       if (response.status === 200) {
-        // Represent intermediate steps as system messages for display purposes
         const intermediateStepMessages = (json.intermediate_steps ?? []).map((intermediateStep: AgentStep, i: number) => {
-          return {id: (messagesWithUserReply.length + i).toString(), content: JSON.stringify(intermediateStep), role: "system"};
+          return { id: (messagesWithUserReply.length + i).toString(), content: JSON.stringify(intermediateStep), role: "system" };
         });
-        const newMessages = messagesWithUserReply;
+    
+        const newMessages = [...messagesWithUserReply];
+    
         for (const message of intermediateStepMessages) {
           newMessages.push(message);
           setMessages([...newMessages]);
+    
+          if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+          }
+    
           await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
         }
+    
         setMessages([...newMessages, { id: (newMessages.length + intermediateStepMessages.length).toString(), content: json.output, role: "assistant" }]);
+    
+        if (messageContainerRef.current) {
+          messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
       } else {
         if (json.error) {
-          toast(json.error, {
-            theme: "dark"
-          });
+          toast(json.error, { theme: "dark" });
           throw new Error(json.error);
         }
       }
     }
-  }
+    
 
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
   return (
-    <div className={`flex flex-col items-center p-4 md:p-8 rounded grow overflow-hidden ${(messages.length > 0 ? "border" : "")}`}>
-      <h2 className={`${messages.length > 0 ? "" : "hidden"} text-2xl`}>{emoji} {titleText}</h2>
+    <div className={`flex flex-col items-center max-h-[85vh] md:p-8 rounded border-black border-4   ${(messages.length > 0 ? "border" : "")}`}>
+      <h2 className={`${messages.length > 0 ? "" : "hidden"}  mb-4 text-black text-2xl`}>{emoji} {titleText}</h2>
       {messages.length === 0 ? emptyStateComponent : ""}
       <div
-        className="flex flex-col-reverse w-full mb-4 overflow-auto transition-[flex-grow] ease-in-out"
+        className="flex flex-col-reverse w-full overflow-y-auto transition-[flex-grow]  ease-in-out"
         ref={messageContainerRef}
       >
         {messages.length > 0 ? (
@@ -129,13 +156,13 @@ export default function ChatWindow(props: {
 
       {messages.length === 0 && ingestForm}
 
-      <form onSubmit={sendMessage} className="flex w-full flex-col">
+      <form onSubmit={sendMessage} className="flex  items-center  w-full flex-col">
         <div className="flex">
           {intemediateStepsToggle}
         </div>
-        <div className="flex w-full mt-4">
+        <div className="flex w-full  ">
           <input
-            className="grow mr-8 p-4 rounded"
+            className=" grow bg-red-200 mr-8 p-4 rounded"
             value={input}
             placeholder={placeholder ?? "What's it like to be a pirate?"}
             onChange={handleInputChange}
