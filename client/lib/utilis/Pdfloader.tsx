@@ -2,7 +2,7 @@ import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 // import { env } from "./config";
 
- async function getChunkedDocsFromPDF(PATH) {
+ async function getChunkedDocsFromPDF(PATH:any) {
   try {
     const loader = new PDFLoader(PATH);
     const docs = await loader.load();

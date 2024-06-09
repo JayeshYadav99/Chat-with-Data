@@ -26,6 +26,7 @@ export const config = {
 
 export async function POST(req: NextRequest) {
   try {
+    // console.log(process.env.SUPABASE_URL,process.env.SUPABASE_PRIVATE_KEY)
     const formData = await req.formData();
     const file = formData.get("PDFdocs") as File;
 
@@ -55,42 +56,17 @@ export async function POST(req: NextRequest) {
 
     const text = "hello"; // Replace with actual text extraction logic if needed
 
+    // const client = createClient(
+    //   "https://trouoginfkvdnltttkec.supabase.co",
+    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyb3VvZ2luZmt2ZG5sdHR0a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDgwNjU0NjAsImV4cCI6MjAyMzY0MTQ2MH0.MeVLmP2zfVb6tbyk_V5PqGdubuqGhPYqJx9Fz4PMQ-s"
+    // );
+   
     const client = createClient(
-      "https://trouoginfkvdnltttkec.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyb3VvZ2luZmt2ZG5sdHR0a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDgwNjU0NjAsImV4cCI6MjAyMzY0MTQ2MH0.MeVLmP2zfVb6tbyk_V5PqGdubuqGhPYqJx9Fz4PMQ-s"
+      process.env.SUPABASE_URL ?? "",
+      process.env.SUPABASE_PRIVATE_KEY ?? ""
     );
 
-    // const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
-    //   chunkSize: 500,
-    //   chunkOverlap: 70,
-    // });
-
-    // const splitDocuments = await splitter.createDocuments([fileContent]);
-    // console.log(splitDocuments);
-
-    // const generateEmbeddings = async (documents) => {
-    //   const embeddings = new GoogleGenerativeAIEmbeddings({
-    //     model: "embedding-001",
-    //     taskType: TaskType.RETRIEVAL_DOCUMENT,
-    //     title: "Document title",
-    //   });
-    //   const embeddingsArray = [];
-    //   for (const doc of documents) {
-    //     const response = await embeddings.embedQuery(`${doc.content}`);
-    //     embeddingsArray.push(response);
-    //   }
-    //   return embeddingsArray;
-    // };
-
-    // const embeddings = await generateEmbeddings(splitDocuments);
-    // const dataToInsert = {
-    //   embedDocuments: splitDocuments.map((doc, index) => ({
-    //     content: doc.pageContent,
-    //     metadata: doc.metadata,
-    //     embedding: embeddings[index],
-    //   })),
-    // };
-    // console.log(embeddings.length);
+  
 
     try {
       const vectorStore = await SupabaseVectorStore.fromDocuments(
@@ -113,7 +89,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
-  } catch (e) {
+  } catch (e : any) {
     console.log(e,e.message)
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
