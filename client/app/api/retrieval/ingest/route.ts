@@ -18,11 +18,11 @@ import { TaskType } from "@google/generative-ai";
 import { writeFile } from "fs/promises";
 import path from "path";
 export const runtime = "nodejs";
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
 
 export async function POST(req: NextRequest) {
   try {
