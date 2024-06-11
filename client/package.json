@@ -25,6 +25,7 @@
     "date-fns": "^3.6.0",
     "formidable": "^3.5.1",
     "fs": "^0.0.1-security",
+    "localtunnel": "^2.0.2",
     "lucide-react": "^0.390.0",
     "mime": "^4.0.3",
     "mongoose": "^8.4.1",
