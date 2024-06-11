@@ -9,9 +9,9 @@
  */
 
   import getChunkedDocsFromPDF from "../../../../lib/utilis/Pdfloader"
-
+  import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from "next/server";
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
@@ -96,8 +96,8 @@ export async function POST(req: NextRequest) {
       console.error("Failed to create Supabase vector store:", error);
       throw new Error("Failed to create Supabase vector store");
     }
-
-    return NextResponse.json({ ok: true }, { status: 200 });
+    revalidatePath('/chat');
+    return NextResponse.json({ ok: true,filename:blob.pathname }, { status: 200 });
   } catch (e : any) {
     console.log(e,e.message)
     return NextResponse.json({ error: e.message }, { status: 500 });

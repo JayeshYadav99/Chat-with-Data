@@ -1,31 +1,20 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import Navbar from '@/components/navbar/Navbar'
 
 export default function page() {
   return (
 
     <div className="min-h-screen flex flex-col">
-              <header className="bg-white shadow">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-xl font-bold">Chat with Docs</div>
-          <nav className="space-x-6">
-            <Link href="#home" className="text-gray-700 hover:text-blue-500">Home</Link>
-            <Link href="#features" className="text-gray-700 hover:text-blue-500">Features</Link>
-            <Link href="#pricing" className="text-gray-700 hover:text-blue-500">Pricing</Link>
-            <Link href="#about" className="text-gray-700 hover:text-blue-500">About</Link>
-            <Link href="#contact" className="text-gray-700 hover:text-blue-500">Contact</Link>
-          </nav>
-          <Link href="#login" className="text-gray-700 hover:text-blue-500">Login</Link>
-        </div>
-      </header>
+         <Navbar />
       <section className="flex-grow bg-gray-100">
         <div className="container mx-auto px-6 py-16 text-center">
           <h1 className="text-4xl font-bold text-gray-900">Effortlessly Chat with Your Documents</h1>
           <p className="mt-4 text-gray-700">Get instant answers, summaries, and insights from your documents through a conversational interface.</p>
           <div className="mt-6 space-x-4">
             <Link href={'/upload'} className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Get Started</Link>
-            <button className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300">Learn More</button>
+            <Link href={'/chat'}className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300">Go to Chats</Link>
           </div>
         </div>
       </section>    

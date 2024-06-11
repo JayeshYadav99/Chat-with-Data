@@ -13,6 +13,7 @@ import { IntermediateStep } from "./IntermediateSteps";
 import type { AgentStep } from 'langchain/agents';
 
 export default function ChatWindow(props: {
+  
   endpoint: string,
   emptyStateComponent?: ReactElement,
   placeholder?: string,
@@ -21,13 +22,15 @@ export default function ChatWindow(props: {
   showIngestForm?: boolean,
   showIntermediateStepsToggle?: boolean
 }) {
+// Add this line to destructure the setFilename function from props
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { endpoint, emptyStateComponent, placeholder, titleText = "An LLM", showIngestForm, showIntermediateStepsToggle, emoji } = props;
 
   const [showIntermediateSteps, setShowIntermediateSteps] = useState(false);
   const [intermediateStepsLoading, setIntermediateStepsLoading] = useState(false);
-  const ingestForm = showIngestForm && <DocumentUploadForm></DocumentUploadForm>;
+
+  const ingest= showIngestForm && <DocumentUploadForm ></DocumentUploadForm>;
   const intemediateStepsToggle = showIntermediateStepsToggle && (
     <div>
       <input type="checkbox" id="show_intermediate_steps" name="show_intermediate_steps" checked={showIntermediateSteps} onChange={(e) => setShowIntermediateSteps(e.target.checked)}></input>
@@ -154,7 +157,7 @@ export default function ChatWindow(props: {
         )}
       </div>
 
-      {messages.length === 0 && ingestForm}
+      {messages.length === 0 && ingest}
 
       <form onSubmit={sendMessage} className="flex  items-center  w-full flex-col">
         <div className="flex">

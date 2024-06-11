@@ -1,19 +1,30 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import DEFAULT_RETRIEVAL_TEXT from "@/data/DefaultRetrievalText";
+import { useState, FormEvent, ChangeEvent } from "react";
 
+
+import DocumentList from "./DocumentList";
 export default function DocumentUploadForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [document, setDocument] = useState<File | null>(null);
-
+  const [previewUrl,SetPreviewUrl]=useState<string>("");
+  const [filename, setFilename] = useState<string | null>(null);
+  const chats = [
+    { id: '1', pdfName: 'Document 1' },
+    { id: '2', pdfName: 'Document 2' },
+    { id: '3', pdfName: 'Document 3' },
+    { id: '4', pdfName: 'Document 4' },
+    { id: '5', pdfName: 'Document 5' },
+  ];
+  
+  const chatId = '1';
   const ingest = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!document) return;
 
     setIsLoading(true);
 
-   
+
     const formData = new FormData();
     formData.append('PDFdocs', document);
 
@@ -25,6 +36,9 @@ export default function DocumentUploadForm() {
       });
       if (response.status === 200) {
         console.log("Uploaded!");
+        const json = await response.json();
+        const {filename}=json;
+        setFilename(filename);
         // setDocument("Uploaded!");
       } else {
         const json = await response.json();
@@ -34,15 +48,24 @@ export default function DocumentUploadForm() {
       }
       setIsLoading(false);
     }
+    const handleFileChange = (e :ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setDocument(file);
+      const preview = URL.createObjectURL(file);
+      SetPreviewUrl(preview);
+      }
+    }
 
 
   return (
-    <form onSubmit={ingest} className="flex w-full mb-4">
+    <>
+      <form onSubmit={ingest} className="flex border-black bg-white mt-4 w-full mb-4">
       <input
         type="file"
         accept="application/pdf"
         className="grow mr-8 p-4 bg-black rounded"
-        onChange={(e) => setDocument(e.target.files ? e.target.files[0] : null)}
+        onChange={(e) => handleFileChange(e)}
       />
       <button type="submit" className="shrink-0 px-8 py-4 bg-sky-600 rounded w-28">
         <div role="status" className={`${isLoading ? "" : "hidden"} flex justify-center`}>
@@ -67,5 +90,25 @@ export default function DocumentUploadForm() {
         <span className={isLoading ? "hidden" : ""}>Upload</span>
       </button>
     </form>
+    <div className="flex max-h-screen  pb-20 flex-col gap-2 mt-4">
+        {/* {chats.map((chat) => (
+          <Link key={chat.id} href={`/chat/${chat.id}`}>
+            <div
+              className={cn("rounded-lg p-3 text-slate-300 flex items-center", {
+                "bg-blue-600 text-white": chat.id === chatId,
+                "hover:text-white": chat.id !== chatId,
+              })}
+            >
+              <MessageCircle className="mr-2" />
+              <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">
+                {chat.pdfName}
+              </p>
+            </div>
+          </Link>
+        ))} */}
+        <DocumentList/>
+      </div>
+    </>
+  
   );
 }
