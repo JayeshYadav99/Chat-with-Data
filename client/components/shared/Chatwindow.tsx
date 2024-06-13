@@ -96,7 +96,7 @@ export default function ChatWindow(props: {
           show_intermediate_steps: true
         })
       });
-    
+      
       const json = await response.json();
       setIntermediateStepsLoading(false);
     
@@ -138,7 +138,7 @@ export default function ChatWindow(props: {
     }
   }, [messages]);
   return (
-    <div className={`flex flex-col items-center max-h-[85vh] md:p-8 rounded border-black border-4   ${(messages.length > 0 ? "border" : "")}`}>
+    <div className={`flex flex-col items-center max-h-[89vh] md:p-8 rounded border-black border-4   ${(messages.length > 0 ? "border" : "")}`}>
       <h2 className={`${messages.length > 0 ? "" : "hidden"}  mb-4 text-black text-2xl`}>{emoji} {titleText}</h2>
       {messages.length === 0 ? emptyStateComponent : ""}
       <div
@@ -165,7 +165,7 @@ export default function ChatWindow(props: {
         </div>
         <div className="flex w-full  ">
           <input
-            className=" grow bg-red-200 mr-8 p-4 rounded"
+            className=" grow bg-red-200 mr-4 p-4 rounded"
             value={input}
             placeholder={placeholder ?? "What's it like to be a pirate?"}
             onChange={handleInputChange}

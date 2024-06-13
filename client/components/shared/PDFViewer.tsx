@@ -5,7 +5,7 @@ interface Props {
     }
 
 function PdfPreviewUpload({ previewUrl }:Props) {
-
+// console.log(previewUrl, 'previewUrl')
   return (
     <div>
       {previewUrl && (

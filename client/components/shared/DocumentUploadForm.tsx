@@ -106,7 +106,7 @@ export default function DocumentUploadForm() {
             </div>
           </Link>
         ))} */}
-        <DocumentList/>
+ 
       </div>
     </>
   

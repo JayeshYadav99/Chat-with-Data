@@ -5,9 +5,13 @@ import Link from "next/link";
 import { MessageCircle, PlusCircle } from "lucide-react";
 import DocumentUploadForm from "./DocumentUploadForm";
 import DocumentList from "./DocumentList";
+import {IChat} from "@/lib/db/models/chat.model";
+interface Props{
+  chats:Partial<IChat>[];
+  chatUrl:string;
+}
 
-
-export default function ChatSidebar() {
+export default function ChatSidebar({chats,chatUrl}:Props) {
 
   return (
      <div className="w-1/4  p-6 max-h-screen  bg-black  p-4 text-gray-200">
@@ -19,7 +23,10 @@ export default function ChatSidebar() {
 
         </Button>
       </Link>
-              <DocumentUploadForm />
+      {/* <DocumentUploadForm  /> */}
+
+      <DocumentList  chatUrl={chatUrl} chats={chats} />
+          
  
 {/* <DocumentList/> */}
     </div>

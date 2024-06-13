@@ -8,7 +8,7 @@
  * https://js.langchain.com/docs/modules/data_connection/vectorstores/integrations/supabase
  */
 
-  import getChunkedDocsFromPDF from "../../../../lib/utilis/Pdfloader"
+  import getChunkedDocsFromPDF from "../../../../lib/parsing/Pdfloader"
   import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,7 +17,7 @@ import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { TaskType } from "@google/generative-ai";
 import { writeFile } from "fs/promises";
-import { downloadFromURL } from "../../../../lib/utilis/DownloadFromVercel";
+import { downloadFromURL } from "../../../../lib/parsing/DownloadFromVercel";
 
 import { put } from "@vercel/blob";
 import path from "path";
@@ -30,7 +30,7 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    // console.log(process.env.SUPABASE_URL,process.env.SUPABASE_PRIVATE_KEY)
+   
     const formData = await req.formData();
     const file = formData.get("PDFdocs") as File;
 

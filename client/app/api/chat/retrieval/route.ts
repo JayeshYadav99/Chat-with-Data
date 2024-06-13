@@ -3,7 +3,7 @@ import { Message as VercelChatMessage, StreamingTextResponse } from "ai";
 import { TaskType } from "@google/generative-ai";
 import { createClient } from "@supabase/supabase-js";
 
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
+
 import { PromptTemplate } from "@langchain/core/prompts";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { Document } from "@langchain/core/documents";
@@ -91,9 +91,9 @@ export async function POST(req: NextRequest) {
       });
 
       const client = createClient(
-        "https://trouoginfkvdnltttkec.supabase.co",
-         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyb3VvZ2luZmt2ZG5sdHR0a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDgwNjU0NjAsImV4cCI6MjAyMzY0MTQ2MH0.MeVLmP2zfVb6tbyk_V5PqGdubuqGhPYqJx9Fz4PMQ-s",
-       );
+        process.env.SUPABASE_URL ?? "",
+        process.env.SUPABASE_PRIVATE_KEY ?? ""
+      );
     const vectorstore = new SupabaseVectorStore( new GoogleGenerativeAIEmbeddings({
         model: "embedding-001", // 768 dimensions
         taskType: TaskType.RETRIEVAL_DOCUMENT,
