@@ -106,7 +106,7 @@ export default function page() {
   return (
     <div className="container mx-auto px-6 py-16">
       <h1 className="text-3xl font-bold mb-6">Upload Documents</h1>
-      <ChatWindow 
+      {/* <ChatWindow 
  
       endpoint="api/chat/retrieval"
       emptyStateComponent={InfoCard}
@@ -116,7 +116,7 @@ export default function page() {
       }
       emoji="🐶"
       titleText="The reterival chain is ready to help you! Ask me anything!"
-    ></ChatWindow>
+    ></ChatWindow> */}
     
 
 
