@@ -4,7 +4,7 @@
 
 Chat with Data is an AI-powered document processing and conversation platform where users can upload PDF documents, have them processed through an AI workflow, and engage in conversations about the content of the documents through a chat interface.
 
-![Chat with Docs Preview](https://github.com/JayeshYadav99/Chat-with-Data/assets/107855172/1f778c1c-7994-4420-9b05-0c6c2aa1c09b)
+![Chat with Data Preview](https://github.com/JayeshYadav99/Chat-with-Data/assets/107855172/1f778c1c-7994-4420-9b05-0c6c2aa1c09b)
 
 ## Features
 
@@ -43,43 +43,21 @@ Chat with Data is an AI-powered document processing and conversation platform wh
 
    Create a `.env` file in the root directory and add the following:
 
-```
-
-
-
-BLOB_READ_WRITE_TOKEN="your-vercel-blob-read-write-token"
-
-# Google API Key for integration (if applicable)
-GOOGLE_API_KEY="your-google-api-key"
-
-# Supabase Private Key for authentication
-SUPABASE_PRIVATE_KEY="your-supabase-private-key"
-
-# Supabase URL for database connection
-SUPABASE_URL="https://your-supabase-url.co"
-
-# Clerk Publishable Key for authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-publishable-key"
-
-# Clerk Secret Key for authentication
-CLERK_SECRET_KEY="your-clerk-secret-key"
-
-# MongoDB Connection URL (if applicable)
-MONGODB_URL="mongodb+srv://username:password@your-mongodb-url"
-
-# Next.js environment variables for Clerk
-NEXT_PUBLIC_CLERK_SIGN_IN_URL="/sign-in"
-NEXT_PUBLIC_CLERK_SIGN_UP_URL="/sign-up"
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL="/"
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL="/"
-
-# Next.js Blob Storage Read/Write Token
-NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN="your-nextjs-blob-read-write-token"
-
-# Clerk Webhook Secret for webhook integration
-# NEXT_CLERK_WEBHOOK_SECRET="your-clerk-webhook-secret"
-
-```
+   ```plaintext
+   BLOB_READ_WRITE_TOKEN="your-vercel-blob-read-write-token"
+   GOOGLE_API_KEY="your-google-api-key"
+   SUPABASE_PRIVATE_KEY="your-supabase-private-key"
+   SUPABASE_URL="https://your-supabase-url.co"
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-publishable-key"
+   CLERK_SECRET_KEY="your-clerk-secret-key"
+   MONGODB_URL="mongodb+srv://username:password@your-mongodb-url"
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL="/sign-in"
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL="/sign-up"
+   NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL="/"
+   NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL="/"
+   NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN="your-nextjs-blob-read-write-token"
+   # NEXT_CLERK_WEBHOOK_SECRET="your-clerk-webhook-secret"
+   ```
 
 4. **Start the application**
 
@@ -91,6 +69,9 @@ NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN="your-nextjs-blob-read-write-token"
 
    Visit `http://localhost:3000` to see the application running.
 
+## Deployment
+
+The application is deployed and accessible at [Deployment Link](https://chat-with-data-bice.vercel.app/).
 
 ## License
 
@@ -98,4 +79,4 @@ This project is licensed under the [MIT License](link-to-license-file).
 
 ---
 
-Feel free to customize the sections further based on additional details or specific aspects of your project.
+Feel free to customize the sections further based on additional details or specific aspects of your project. Replace `https://your-deployment-link.com` with the actual URL where your application is deployed.
