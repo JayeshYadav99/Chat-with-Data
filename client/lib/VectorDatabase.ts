@@ -23,6 +23,10 @@ export async function loadDocsintoVectorDatabase(file_url: string)
 
 try {
     const fileContent = await getChunkedDocsFromPDF( localFilePath)
+    if(fileContent==null) 
+      {
+        throw new Error("Error processing file content");
+      }
     console.log("File Content:", fileContent);
     const client = getSupabaseClient();
     const vectorStore = await getVectorStore(fileContent, client);
@@ -34,6 +38,8 @@ try {
           console.log(`Temporary file ${localFilePath} deleted successfully.`);
         }
       });
+
+      return localFilePath;
 } catch (error) {
     
     console.error("Error processing file:", error);

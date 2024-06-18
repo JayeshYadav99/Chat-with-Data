@@ -12,8 +12,8 @@ export async function POST(req: Request, res: Response) {
   try {
     const body = await req.json();
     const { file_key, file_name,url } = body;
-     await loadDocsintoVectorDatabase(url);
-    const NewChat = await createChat({file_key,file_name,userId,url});
+    const path = await loadDocsintoVectorDatabase(url);
+    const NewChat = await createChat({file_key,file_name,userId,url,path});
 
     return NextResponse.json(
       {

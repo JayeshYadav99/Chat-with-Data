@@ -35,7 +35,7 @@ const formatVercelMessages = (chatHistory: VercelChatMessage[]) => {
   return formattedDialogueTurns.join("\n");
 };
 
-const CONDENSE_QUESTION_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+const CONDENSE_QUESTION_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language(English).
 
 <chat_history>
   {chat_history}
@@ -47,7 +47,8 @@ const condenseQuestionPrompt = PromptTemplate.fromTemplate(
   CONDENSE_QUESTION_TEMPLATE,
 );
 const ANSWER_TEMPLATE = `
-Answer the question in English Language based on the context and chat history:
+
+Provide a detailed and comprehensive answer to the question . Ensure that your response highlights important keywords and phrases by **bolding** them. The answer should be based on the context and chat history provided.
 
 <context>
   {context}
@@ -58,9 +59,13 @@ Answer the question in English Language based on the context and chat history:
 </chat_history>
 
 Question: {question}
+
+Detailed Response:
+
 `;
 
 const answerPrompt = PromptTemplate.fromTemplate(ANSWER_TEMPLATE);
+
 
 /**
  * This handler initializes and calls a retrieval chain. It composes the chain using
@@ -71,7 +76,11 @@ const answerPrompt = PromptTemplate.fromTemplate(ANSWER_TEMPLATE);
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    console.log("body",body);
     const messages = body.messages ?? [];
+    const source=body.source;
+    console.log("source",source);
+   
     const previousMessages = messages.slice(0, -1);
     const currentMessageContent = messages[messages.length - 1].content;
 
@@ -97,7 +106,7 @@ export async function POST(req: NextRequest) {
     const vectorstore = new SupabaseVectorStore( new GoogleGenerativeAIEmbeddings({
         model: "embedding-001", // 768 dimensions
         taskType: TaskType.RETRIEVAL_DOCUMENT,
-        title: "Document title",
+        title: "Document Embeddings",
       }), {
       client,
       tableName: "documents",
@@ -125,6 +134,7 @@ export async function POST(req: NextRequest) {
     });
 
     const retriever = vectorstore.asRetriever({
+      filter: { source: source },
       callbacks: [
         {
           handleRetrieverEnd(documents) {
@@ -148,6 +158,17 @@ export async function POST(req: NextRequest) {
       answerPrompt,
       model,
     ]);
+    // Step 2: Get the answer from the answerChain
+   
+    // const answer = await answerChain.invoke({
+    //   question: standaloneQuestionChain,
+    //   chat_history: formatVercelMessages(previousMessages),
+    // });
+
+    // console.log("Answer:", answer);
+
+
+    
 
     const conversationalRetrievalQAChain = RunnableSequence.from([
       {

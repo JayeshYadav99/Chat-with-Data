@@ -34,7 +34,7 @@ const page = async({params:{id}}:Props) => {
             return redirect("/");
         }
         const currentChat=chats.find((chat:any) => chat._id.toString() === id.toString());
-
+       console.log(currentChat)
   return (
     <div>
       <div className="flex h-screen ">
@@ -67,6 +67,7 @@ const page = async({params:{id}}:Props) => {
               placeholder={"Ask me anything about the document"}
               emoji="🤖"
               titleText="AI Document Chat"
+              chatSource={currentChat?.source}
             ></ChatWindow>
           </div>
         </main>

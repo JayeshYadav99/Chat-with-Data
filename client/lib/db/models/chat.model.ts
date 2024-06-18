@@ -6,6 +6,7 @@ export interface IChat extends Document {
   createdAt: Date;
   userId: Schema.Types.ObjectId;
   fileKey: string;
+  source: string;
 }
 
 const ChatSchema = new Schema<IChat>({
@@ -14,8 +15,11 @@ const ChatSchema = new Schema<IChat>({
   createdAt: { type: Date, default: Date.now },
 userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   fileKey: { type: String, required: true },
+  source : { type: String, required: true },
 });
 
+
 const Chat = models.Chat || model<IChat>('Chat', ChatSchema);
+// console.log("Chat Model", Chat)
 
 export default Chat;

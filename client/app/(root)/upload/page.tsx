@@ -1,13 +1,11 @@
 "use client"
 import React from 'react'
-import DocumentList from '../../../components/shared/DocumentList'
-import DocumentUploadForm from '../../../components/shared/DocumentUploadForm'
+
 import ChatWindow from '../../../components/shared/Chatwindow'
-import { useState } from 'react'
+
 export default function page() {
 
-  const[preview,SetPreview]=useState('')
-  const [filename, setFilename] = useState('Choose a file to upload');
+
     const InfoCard = (
         <div className="p-4 md:p-8 rounded bg-[#25252d] w-full max-h-[85%] overflow-hidden">
           <h1 className="text-3xl md:text-4xl mb-4">
@@ -109,8 +107,7 @@ export default function page() {
     <div className="container mx-auto px-6 py-16">
       <h1 className="text-3xl font-bold mb-6">Upload Documents</h1>
       <ChatWindow 
-  //  SetPreview={SetPreview}
-  //  setFilename={setFilename}
+ 
       endpoint="api/chat/retrieval"
       emptyStateComponent={InfoCard}
       showIngestForm={true}
@@ -120,7 +117,7 @@ export default function page() {
       emoji="🐶"
       titleText="The reterival chain is ready to help you! Ask me anything!"
     ></ChatWindow>
-      <DocumentList />
+    
 
 
       </div>

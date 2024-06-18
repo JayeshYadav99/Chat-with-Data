@@ -6,9 +6,12 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 
  async function getChunkedDocsFromPDF(PATH:any) {
+
   try {
+    console.log("PATH",PATH)
     const loader = new PDFLoader(PATH);
     const docs = await loader.load();
+    console.log("docs",docs)
 
     // From the docs https://www.pinecone.io/learn/chunking-strategies/
     const textSplitter = new RecursiveCharacterTextSplitter({

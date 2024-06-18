@@ -21,11 +21,13 @@ export default function ChatWindow(props: {
   emoji?: string;
   showIngestForm?: boolean,
   showIntermediateStepsToggle?: boolean
+  chatSource:string
 }) {
 // Add this line to destructure the setFilename function from props
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const { endpoint, emptyStateComponent, placeholder, titleText = "An LLM", showIngestForm, showIntermediateStepsToggle, emoji } = props;
+  const { endpoint, emptyStateComponent, placeholder, titleText = "An LLM", showIngestForm, showIntermediateStepsToggle, emoji, chatSource } = props;
+  console.log(chatSource)
 
   const [showIntermediateSteps, setShowIntermediateSteps] = useState(false);
   const [intermediateStepsLoading, setIntermediateStepsLoading] = useState(false);
@@ -43,7 +45,11 @@ export default function ChatWindow(props: {
   const { messages, input, setInput, handleInputChange, handleSubmit, isLoading: chatEndpointIsLoading, setMessages } =
     useChat({
       api: endpoint,
+      body: {
+        source: chatSource,
+      },
       onResponse(response) {
+      alert(response)
         const sourcesHeader = response.headers.get("x-sources");
         const sources = sourcesHeader ? JSON.parse((Buffer.from(sourcesHeader, 'base64')).toString('utf8')) : [];
         const messageIndexHeader = response.headers.get("x-message-index");
@@ -90,14 +96,17 @@ export default function ChatWindow(props: {
       }
     
       const response = await fetch(endpoint, {
+
         method: "POST",
         body: JSON.stringify({
-          messages: messagesWithUserReply,
+          messages: {messagesWithUserReply,chatSource},
+      
           show_intermediate_steps: true
         })
       });
       
       const json = await response.json();
+      console.log("JSON",json)
       setIntermediateStepsLoading(false);
     
       if (response.status === 200) {
@@ -138,7 +147,7 @@ export default function ChatWindow(props: {
     }
   }, [messages]);
   return (
-    <div className={`flex flex-col items-center max-h-[89vh] md:p-8 rounded border-black border-4   ${(messages.length > 0 ? "border" : "")}`}>
+    <div className={`flex flex-col items-center max-h-[89vh] md:p-8 rounded    ${(messages.length > 0 ? "border" : "")}`}>
       <h2 className={`${messages.length > 0 ? "" : "hidden"}  mb-4 text-black text-2xl`}>{emoji} {titleText}</h2>
       {messages.length === 0 ? emptyStateComponent : ""}
       <div

@@ -1,4 +1,5 @@
 import type { Message } from "ai/react";
+import Markdown from 'react-markdown'
 
 export function ChatMessageBubble(props: { message: Message, aiEmoji?: string, sources: any[] }) {
   const colorClassName =
@@ -14,7 +15,7 @@ export function ChatMessageBubble(props: { message: Message, aiEmoji?: string, s
         {prefix}
       </div>
       <div className="whitespace-pre-wrap flex flex-col">
-        <span>{props.message.content}</span>
+        <span><Markdown>{props.message.content}</Markdown></span>
         {props.sources && props.sources.length ? <>
           <code className="mt-4 mr-auto bg-slate-600 px-2 py-1 rounded">
             <h2>

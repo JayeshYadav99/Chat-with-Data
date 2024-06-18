@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
+    pageExtensions: ["page.tsx",'ts', 'tsx'],
     webpack(config, { isServer }) {
       if (!isServer) {
         config.resolve.fallback = {
@@ -12,5 +13,6 @@ const nextConfig = {
       return config;
     }
   };
+  
   
   export default nextConfig;
