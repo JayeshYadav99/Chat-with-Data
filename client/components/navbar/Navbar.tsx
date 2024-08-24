@@ -26,8 +26,8 @@ const Navbar = () => {
             <Link href="#home" className="text-gray-700 hover:text-blue-500">Home</Link>
             <Link href="#features" className="text-gray-700 hover:text-blue-500">Features</Link>
             <Link href="#pricing" className="text-gray-700 hover:text-blue-500">Pricing</Link>
-            <Link href="#about" className="text-gray-700 hover:text-blue-500">About</Link>
-            <Link href="#contact" className="text-gray-700 hover:text-blue-500">Contact</Link>
+            <Link href="https://github.com/JayeshYadav99/Chat-with-Data" className="text-gray-700 hover:text-blue-500">About</Link>
+            {/* <Link href="#contact" className="text-gray-700 hover:text-blue-500">Contact</Link> */}
             
           </nav>
           <div className="flex w-32 justify-end gap-5">

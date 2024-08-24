@@ -2,6 +2,7 @@
 const nextConfig = {
     reactStrictMode: true,
     pageExtensions: ["page.tsx",'ts', 'tsx'],
+    
     webpack(config, { isServer }) {
       if (!isServer) {
         config.resolve.fallback = {

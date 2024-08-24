@@ -48,8 +48,7 @@ export default async function page() {
           </div>
           <div className="flex items-center justify-center">
   <p className="text-xl text-slate-600 text-center mt-4">
-    Join millions of students, researchers and professionals to instantly
-    answer questions and understand research with AI
+  Discover AI-powered tools for instant document analysis and deeper insights. Join professionals and students in leveraging cutting-edge technology for rapid understanding.
   </p>
 </div>
 </section>
