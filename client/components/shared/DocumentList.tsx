@@ -4,11 +4,14 @@ import React, { Key } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { MessageCircle,Trash2 } from "lucide-react";
 import { IChat } from "@/lib/db/models/chat.model";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
+import {truncateText} from "@/lib/utils";
+import { useToast } from "@/components/hooks/use-toast";
 import axios from "axios";
+
 interface Document {
   downloadUrl: string;
   pathname: string;
@@ -23,28 +26,34 @@ interface Props {
   isPdfVisible: boolean;
 }
 export default   function DocumentList({ chats, chatUrl ,onSelectPdf,isPdfVisible}: Props) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const handleDelete = async (chatId: string, fileUrl: string) => {
+    try {
+      console.log("Deleting chat", chatId, fileUrl);
+      const response = await axios.post("/api/delete-chat", {
+        chatId,
+        chatUrl: fileUrl
+      });
 
-  const handleDelete = async(chatId: string,fileUrl:string) => {
-    console.log("Deleting chat", chatId, fileUrl);
-    const response = await axios.post("/api/delete-chat", {
-   chatId,
-   chatUrl
-    });
-    
-   
-    // const result = await DeleteChatById({ chatId, chatUrl:fileUrl });
-    // if (result.success) {
-    //   console.log("Chat deleted successfully")
-    //   // Update state to remove the chat from the list
-    //   // setChats((prevChats) => prevChats.filter((chat) => chat._id !== chatId));
-    // } else {
-    //   // Handle the error appropriately (e.g., show a notification)
-    //   console.error("Failed to delete the chat");
-    // }
-    // Perform the deletion logic here
-    // For example, make an API call to delete the chat from the server
-    // Then update the state to remove the chat from the list
-
+      if (response.data.success) {
+        toast({
+          title: "Chat deleted",
+          description: "The chat has been successfully deleted.",
+       
+        });
+        router.refresh();
+      } else {
+        throw new Error(response.data.message || "Failed to delete chat");
+      }
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the chat. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
   return (
     <div className="mt-4">
@@ -59,7 +68,7 @@ export default   function DocumentList({ chats, chatUrl ,onSelectPdf,isPdfVisibl
           <Link href={`/chat/${chat?._id}`} className="flex items-center w-full">
             <MessageCircle className="mr-2" />
             <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">
-              {chat.pdfName}
+              {truncateText(chat.pdfName ?? '', 25)}
             </p>
           </Link>
           <button

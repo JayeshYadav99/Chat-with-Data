@@ -55,7 +55,8 @@ const response = await axios.post("/api/create-chat", {
     },
   });
   return (
-    <div className="p-2 bg-white rounded-xl">
+          
+    <div className="max-w-xl mx-auto p-2 bg-white rounded-xl">
       <div
         {...getRootProps({
           className:
@@ -74,7 +75,7 @@ const response = await axios.post("/api/create-chat", {
         ) : (
           <>
             <Inbox className="w-10 h-10 text-blue-500" />
-            <p className="mt-2 text-sm text-slate-400">Drop PDF Here</p>
+            <p className="mt-2 text-sm text-slate-400">To create a New Chat Drop PDF Here</p>
           </>
         )}
       </div>

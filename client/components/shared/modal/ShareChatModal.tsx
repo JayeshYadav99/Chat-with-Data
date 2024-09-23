@@ -122,7 +122,7 @@ export default function ShareChatModal({ chatId, messages }: ShareChatModalProps
         </div>
         <div className="flex justify-center">
           <Button variant="outline" onClick={exportChat}>
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="mr-2 h-4 w-4 text-purple-500" />
             Export Chat
           </Button>
         </div>

@@ -133,7 +133,7 @@ export default function ChatInterface({ chatSource, currentChat,isShare }: Props
       {!isShare ? (
           <>
             <Button onClick={resetChat} variant="outline">
-              <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="mr-2 h-4 w-4 text-green-500" />
               Reset Chat
             </Button>
             <ShareChatModal chatId={currentChat._id} messages={messages} />
