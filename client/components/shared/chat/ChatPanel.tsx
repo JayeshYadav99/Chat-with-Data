@@ -25,10 +25,10 @@ export default function ChatInterface({ chatSource, currentChat,isShare }: Props
   const [initialMessages, setInitialMessages] = useState<any[]>([]);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const skeletonMessages = [
-    { id: 'skeleton-1', role: 'user', content: '' },
-    { id: 'skeleton-2', role: 'assistant', content: '' },
-    { id: 'skeleton-3', role: 'user', content: '' },
-    { id: 'skeleton-4', role: 'assistant', content: '' },
+    { id: 'skeleton-1', role: 'user' as const, content: '' },
+    { id: 'skeleton-2', role: 'assistant' as const, content: '' },
+    { id: 'skeleton-3', role: 'user' as const, content: '' },
+    { id: 'skeleton-4', role: 'assistant' as const, content: '' },
   ]
   const placeholder = "Ask me anything about the document";
   const {

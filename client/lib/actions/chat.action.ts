@@ -160,7 +160,7 @@ export async function getSharedChatDetails(chatId: string) {
     return null;
   }
 }
-interface  UpdateChatStatusParam
+interface  UpdateChatStatusParams
 {
   chatId: string;
   isPublic: boolean;
