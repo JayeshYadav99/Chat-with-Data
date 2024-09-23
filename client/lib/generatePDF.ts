@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-export const generatePDF = (chatMessages) => {
+export const generatePDF = (chatMessages:any) => {
   const doc = new jsPDF();
 
   // Add a title
@@ -15,7 +15,7 @@ export const generatePDF = (chatMessages) => {
   doc.text('Below are the chat messages:', 14, 30);
 
   // Prepare chat data for table (Q&A format)
-  const rows = chatMessages.map((message) => [
+  const rows = chatMessages.map((message:any) => [
     message.role,
     message.content,
   ]);

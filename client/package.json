@@ -32,6 +32,8 @@
     "formidable": "^3.5.1",
     "framer-motion": "^11.3.30",
     "fs": "^0.0.1-security",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.3",
     "localtunnel": "^2.0.2",
     "lucide-react": "^0.390.0",
     "mime": "^4.0.3",
