@@ -92,7 +92,7 @@ export async function createMessage(params: any) {
   
       const originalMessages = originalMessagesResult.messages;
   
-      const newMessages = await Promise.all(originalMessages.map(async (msg) => {
+      const newMessages = await Promise.all(originalMessages.map(async (msg: { content: string; role: string }) => {
         const newMessage = new Message({
           chatId: newChatId,
           content: msg.content,

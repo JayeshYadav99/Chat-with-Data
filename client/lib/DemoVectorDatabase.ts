@@ -82,6 +82,13 @@ export function vectorStore(): MongoDBAtlasVectorSearch {
     return vectorStore
 }
 
+interface MongoDBAtlasVectorSearchLibArgs {
+    collection: any;
+    indexName: string;
+    textKey: string;
+    embeddingKey: string;
+}
+
 export function searchArgs(): MongoDBAtlasVectorSearchLibArgs {
     const searchArgs: MongoDBAtlasVectorSearchLibArgs = 
       {
