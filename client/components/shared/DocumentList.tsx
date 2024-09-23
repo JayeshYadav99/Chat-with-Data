@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { MessageCircle,Trash2 } from "lucide-react";
 import { IChat } from "@/lib/db/models/chat.model";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import axios from "axios";
 interface Document {
@@ -18,8 +19,10 @@ interface Document {
 interface Props {
   chats: Partial<IChat>[];
   chatUrl: string;
+  onSelectPdf: () => void;
+  isPdfVisible: boolean;
 }
-export default   function DocumentList({ chats, chatUrl }: Props) {
+export default   function DocumentList({ chats, chatUrl ,onSelectPdf,isPdfVisible}: Props) {
 
   const handleDelete = async(chatId: string,fileUrl:string) => {
     console.log("Deleting chat", chatId, fileUrl);
@@ -45,7 +48,7 @@ export default   function DocumentList({ chats, chatUrl }: Props) {
   };
   return (
     <div className="mt-4">
-     {chats.map((chat) => (
+     {chats && chats.map((chat) => (
         <div
           key={chat?._id as Key}
           className={cn("rounded-lg p-3 text-slate-300 flex items-center justify-between", {
@@ -64,6 +67,12 @@ export default   function DocumentList({ chats, chatUrl }: Props) {
             className="ml-2 text-red-500 hover:text-red-700"
           >
             <Trash2 />
+          </button>
+          <button
+            className="ml-2 p-1 rounded-md hover:bg-blue-500"
+            onClick={onSelectPdf} // Trigger PDF visibility toggle
+          >
+            {isPdfVisible ? <FaEye /> : <FaEyeSlash />} {/* Toggle icon based on PDF visibility */}
           </button>
         </div>
       ))}

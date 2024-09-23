@@ -1,3 +1,4 @@
+"use server"
 import { connectToDatabase } from "@/lib/db";
 import Chat from "@/lib/db/models/chat.model";
 import { handleError } from "@/lib/utils";
@@ -16,6 +17,7 @@ export async function createChat(params: CreateChatParams) {
   try {
     await connectToDatabase();
     const { file_key, file_name, userId, url ,path} = params;
+    console.log(params)
     const user = await User.findOne({ clerkId: userId });
     if (!user) throw new Error("User not found");
 
@@ -25,7 +27,10 @@ export async function createChat(params: CreateChatParams) {
       userId: user._id,
       fileKey: file_key,
       source: path,
+      messages:[],
+
     });
+    console.log("New Chat",newChat)
     return JSON.parse(JSON.stringify(newChat));
   } catch (error) {
     handleError(error);
@@ -130,6 +135,67 @@ export async function DeleteChatById(params: DeleteChatParams) {
     return {
       success: false,
       data: null,
+    };
+  }
+}
+export async function getSharedChatDetails(chatId: string) {
+  try {
+    await connectToDatabase();
+
+    const chat = await Chat.findOne({ _id: chatId, isPublic: true });
+
+    if (!chat) {
+      return null;
+    }
+
+    return {
+      source: chat.source,
+      fileKey: chat.fileKey,
+      pdfUrl: chat.pdfUrl,
+      pdfName: chat.pdfName
+      // Add any other details you want to display
+    };
+  } catch (error) {
+    console.error('Error fetching shared chat details:', error);
+    return null;
+  }
+}
+interface  UpdateChatStatusParam
+{
+  chatId: string;
+  isPublic: boolean;
+}
+export async function updateChatStatus(params: UpdateChatStatusParams) {
+  try {
+    await connectToDatabase();
+    const { chatId, isPublic } = params;
+    console.log(params)
+
+    const updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      { isPublic},
+      { new: true }
+    );
+
+    if (!updatedChat) {
+      return {
+        success: false,
+        message: "Chat not found",
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        id: updatedChat._id.toString(),
+        isPublic: updatedChat.isPublic,
+      },
+    };
+  } catch (error) {
+    handleError(error);
+    return {
+      success: false,
+      message: "Failed to update chat status",
     };
   }
 }

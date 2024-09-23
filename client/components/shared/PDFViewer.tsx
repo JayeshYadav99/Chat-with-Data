@@ -1,27 +1,25 @@
+import React from 'react'
+import { Loader2 } from 'lucide-react'
 
-import React from 'react';
 interface Props {
-    previewUrl: string;
-    }
-
-function PdfPreviewUpload({ previewUrl }:Props) {
-// console.log(previewUrl, 'previewUrl')
-  return (
-    <div>
-      {previewUrl && (
-         <div  >
-         {previewUrl && (
-           <iframe
-             src={previewUrl}
-       
-             width="400"
-             height="600"
-           ></iframe>
-         )}
-       </div>
-      )}
-    </div>
-  );
+  previewUrl: string
 }
 
-export default PdfPreviewUpload;
+export default function PdfPreviewUpload({ previewUrl }: Props) {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+      {previewUrl ? (
+        <iframe
+          src={previewUrl}
+          className="w-full h-full border-none"
+          title="PDF Preview"
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center text-gray-500">
+          <Loader2 className="h-8 w-8 animate-spin mb-2" />
+          <p>Loading PDF preview...</p>
+        </div>
+      )}
+    </div>
+  )
+}

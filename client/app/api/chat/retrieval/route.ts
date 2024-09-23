@@ -83,11 +83,6 @@ export async function POST(req: NextRequest) {
    
     const previousMessages = messages.slice(0, -1);
     const currentMessageContent = messages[messages.length - 1].content;
-
-    // const model = new ChatOpenAI({
-    //   modelName: "gpt-3.5-turbo-1106",
-    //   temperature: 0.2,
-    // });
     const model = new ChatGoogleGenerativeAI({
         model: "gemini-pro",
         maxOutputTokens: 2048,
@@ -176,14 +171,21 @@ export async function POST(req: NextRequest) {
         chat_history: (input) => input.chat_history,
       },
       answerChain,
-      new BytesOutputParser(),
+      new StringOutputParser(),
     ]);
 
     const stream = await conversationalRetrievalQAChain.stream({
       question: currentMessageContent,
       chat_history: formatVercelMessages(previousMessages),
     });
-
+   
+    for await (const chunk of await conversationalRetrievalQAChain.stream({
+      question: currentMessageContent,
+      chat_history: formatVercelMessages(previousMessages),
+    })) {
+      console.log("chunk",chunk);
+    }
+    // Step 3: Once the stream is done, save the accumulated response to the database
     const documents = await documentPromise;
     const serializedSources = Buffer.from(
       JSON.stringify(

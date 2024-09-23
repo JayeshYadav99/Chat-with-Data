@@ -1,9 +1,10 @@
-import mongoose, { Document, Schema, Model } from 'mongoose';
+import mongoose, { Document, Schema,models,model } from 'mongoose';
 
 // Define an enum for the role field
 enum UserRole {
   USER = 'user',
   SYSTEM = 'system',
+  ASSISTANT = 'assistant',
  
 }
 
@@ -24,6 +25,6 @@ const messageSchema: Schema<IMessage> = new Schema({
 });
 
 // Create a Mongoose model.
-const Message: Model<IMessage> = mongoose.model<IMessage>('Message', messageSchema);
+const Message =models?.Message || model<IMessage>('Message', messageSchema);
 
 export default Message;

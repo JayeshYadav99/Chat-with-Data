@@ -42,17 +42,23 @@ export default function ChatWindow(props: {
 
   const [sourcesForMessages, setSourcesForMessages] = useState<Record<string, any>>({});
 
-  const { messages, input, setInput, handleInputChange, handleSubmit, isLoading: chatEndpointIsLoading, setMessages } =
-    useChat({
+  const { messages, input, setInput, handleInputChange, handleSubmit, isLoading: chatEndpointIsLoading, setMessages,data } =
+    useChat
+    (
+      {
       api: endpoint,
       body: {
         source: chatSource,
       },
       onResponse(response) {
-      alert(response)
-        const sourcesHeader = response.headers.get("x-sources");
-        const sources = sourcesHeader ? JSON.parse((Buffer.from(sourcesHeader, 'base64')).toString('utf8')) : [];
-        const messageIndexHeader = response.headers.get("x-message-index");
+        console.log("response",messages)
+        console.log("response",response)
+    
+      const sourcesHeader = response.headers.get("sources");
+      const sources = sourcesHeader ? JSON.parse((Buffer.from(sourcesHeader, 'base64')).toString('utf8')) : [];
+      const messageIndexHeader =  response.headers.get("messageindex");
+      console.log("sources",sources)
+      console.log("messageIndexHeader",messageIndexHeader)
         if (sources.length && messageIndexHeader !== null) {
           setSourcesForMessages({...sourcesForMessages, [messageIndexHeader]: sources});
         }
@@ -67,6 +73,7 @@ export default function ChatWindow(props: {
 
     async function sendMessage(e: FormEvent<HTMLFormElement>) {
       e.preventDefault();
+      console.log("callled------------->")
       
       if (messageContainerRef.current) {
         messageContainerRef.current.classList.add("grow");
@@ -81,6 +88,7 @@ export default function ChatWindow(props: {
       }
     
       if (!showIntermediateSteps) {
+        
         handleSubmit(e);
         return;
       } 
@@ -104,11 +112,12 @@ export default function ChatWindow(props: {
           show_intermediate_steps: true
         })
       });
+      alert("response")
       
       const json = await response.json();
       console.log("JSON",json)
       setIntermediateStepsLoading(false);
-    
+
       if (response.status === 200) {
         const intermediateStepMessages = (json.intermediate_steps ?? []).map((intermediateStep: AgentStep, i: number) => {
           return { id: (messagesWithUserReply.length + i).toString(), content: JSON.stringify(intermediateStep), role: "system" };
@@ -126,7 +135,7 @@ export default function ChatWindow(props: {
     
           await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
         }
-    
+           console.log("newMessages",newMessages)
         setMessages([...newMessages, { id: (newMessages.length + intermediateStepMessages.length).toString(), content: json.output, role: "assistant" }]);
     
         if (messageContainerRef.current) {
@@ -134,7 +143,7 @@ export default function ChatWindow(props: {
         }
       } else {
         if (json.error) {
-          toast(json.error, { theme: "dark" });
+toast(json.error, { theme: "dark" });
           throw new Error(json.error);
         }
       }
@@ -174,7 +183,7 @@ export default function ChatWindow(props: {
         </div>
         <div className="flex w-full  ">
           <input
-            className=" grow bg-red-200 mr-4 p-4 rounded"
+            className=" grow bg-slate-500 mr-4 p-4 rounded"
             value={input}
             placeholder={placeholder ?? "What's it like to be a pirate?"}
             onChange={handleInputChange}
@@ -195,3 +204,4 @@ export default function ChatWindow(props: {
     </div>
   );
 }
+          

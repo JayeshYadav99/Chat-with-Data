@@ -11,9 +11,11 @@ import {IChat} from "@/lib/db/models/chat.model";
 interface Props{
   chats:Partial<IChat>[];
   chatUrl:string;
+  onSelectPdf: () => void;
+  isPdfVisible: boolean;
 }
 
-export default function ChatSidebar({chats,chatUrl}:Props) {
+export default function ChatSidebar({chats,chatUrl,isPdfVisible,onSelectPdf}:Props) {
 
 
   return (
@@ -28,7 +30,7 @@ export default function ChatSidebar({chats,chatUrl}:Props) {
       </Link>
       {/* <DocumentUploadForm  /> */}
       
-      <DocumentList  chatUrl={chatUrl} chats={chats} />
+      <DocumentList  chatUrl={chatUrl} chats={chats} onSelectPdf={onSelectPdf}  isPdfVisible={isPdfVisible} />
 
 
           
