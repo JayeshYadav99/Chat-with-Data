@@ -17,6 +17,11 @@ import {
     BytesOutputParser,
     StringOutputParser,
   } from "@langchain/core/output_parsers";
+  type VercelChatMessage = {
+    role: string;
+    content: string;
+  };
+  
   const formatVercelMessages = (chatHistory: VercelChatMessage[]) => {
     const formattedDialogueTurns = chatHistory.map((message) => {
       if (message.role === "user") {
