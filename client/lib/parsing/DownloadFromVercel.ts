@@ -13,7 +13,7 @@ export async function downloadFromURL(file_url: string): Promise<string> {
 
       // Create a temporary file path
     //   const filePath = path.join(process.cwd(), "public/assets", filename);
-      const tempFilePath = path.join(process.cwd(),"public/assets", `file_${Date.now().toString()}.pdf`);
+      const tempFilePath = path.join('/tmp', `file_${Date.now().toString()}.pdf`);
 
       // Write the buffer to a file
       fs.writeFile(tempFilePath, buffer, (err) => {
