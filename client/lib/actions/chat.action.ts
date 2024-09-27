@@ -4,7 +4,7 @@ import Chat from "@/lib/db/models/chat.model";
 import { handleError } from "@/lib/utils";
 import User from "../db/models/user.model";
 import { del } from '@vercel/blob';
-
+import { revalidatePath } from "next/cache";
 interface CreateChatParams {
   file_key: string;
   file_name: string;
@@ -113,10 +113,11 @@ export async function DeleteChatById(params: DeleteChatParams) {
   
   try {
     await connectToDatabase();
-
+console.log("chatId",chatId)
     // Delete chat from database
     const chat = await Chat.findByIdAndDelete(chatId);
     if (!chat) {
+      console.error("Chat not found")
       return {
         success: false,
         data: null,
@@ -125,7 +126,7 @@ export async function DeleteChatById(params: DeleteChatParams) {
 
     // Delete file from Vercel Blob Storage
     const deleteResponse = await del(chatUrl);
-
+    revalidatePath(`/chat/${chat._id}`)
     return {
       success: true,
       data: chat._id.toString(),
