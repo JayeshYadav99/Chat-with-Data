@@ -1,5 +1,4 @@
 
-
 # Chat with Data
 
 Chat with Data is an AI-powered document processing and conversation platform where users can upload PDF documents, have them processed through an AI workflow, and engage in conversations about the content of the documents through a chat interface.
@@ -14,6 +13,8 @@ Chat with Data is an AI-powered document processing and conversation platform wh
 - **Chat Interface**: Enables users to discuss document contents via a chat interface.
 - **Document Preview**: Provides a preview of the uploaded document within the chat interface.
 - **Scalable Storage**: Uses Vercel Blob Storage for managing document files securely.
+- **Export Chat as Detailed PDF**: Users can export their chat history, including AI analysis and document excerpts, into a PDF for offline viewing.
+- **Fork Chat**: Allows users to fork a conversation from shared chat.
 
 ## Tech Stack
 
@@ -69,6 +70,8 @@ Chat with Data is an AI-powered document processing and conversation platform wh
 
    Visit `http://localhost:3000` to see the application running.
 
+
+
 ## Deployment
 
 The application is deployed and accessible at [Deployment Link](https://chat-with-data-bice.vercel.app/).
@@ -79,4 +82,4 @@ This project is licensed under the [MIT License](link-to-license-file).
 
 ---
 
-Feel free to customize the sections further based on additional details or specific aspects of your project. Replace `https://your-deployment-link.com` with the actual URL where your application is deployed.
+With these new features integrated, the application now offers better user engagement, document interaction, and scalability. Feel free to adjust the wording or add further technical details based on how the features are implemented in your project.
