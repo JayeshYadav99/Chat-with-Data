@@ -1,7 +1,7 @@
 
-# Chat with Data
+# Chat with Docs
 
-Chat with Data is an AI-powered document processing and conversation platform where users can upload PDF documents, have them processed through an AI workflow, and engage in conversations about the content of the documents through a chat interface.
+Chat with Docs is an AI-powered document processing and conversation platform where users can upload PDF documents, have them processed through an AI workflow, and engage in conversations about the content of the documents through a chat interface.
 
 ![Chat with Data Preview](https://github.com/user-attachments/assets/da78c0b0-de9d-4e57-8662-3d49e43c8875)
 
