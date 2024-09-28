@@ -76,10 +76,4 @@ Chat with Data is an AI-powered document processing and conversation platform wh
 
 The application is deployed and accessible at [Deployment Link](https://chat-with-data-bice.vercel.app/).
 
-## License
 
-This project is licensed under the [MIT License](link-to-license-file).
-
----
-
-With these new features integrated, the application now offers better user engagement, document interaction, and scalability. Feel free to adjust the wording or add further technical details based on how the features are implemented in your project.
