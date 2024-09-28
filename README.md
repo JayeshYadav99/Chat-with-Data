@@ -5,6 +5,10 @@ Chat with Data is an AI-powered document processing and conversation platform wh
 
 ![Chat with Data Preview](https://github.com/user-attachments/assets/da78c0b0-de9d-4e57-8662-3d49e43c8875)
 
+## RAG WORKFLOW
+![RAG Workflow](https://github.com/user-attachments/assets/b861169d-c071-493c-81db-b22d76c85b6c)
+
+
 ## Features
 
 - **Document Processing**: Upload PDF documents which are processed using an AI workflow.
