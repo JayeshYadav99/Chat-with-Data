@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/navbar/Navbar'
 import FileUpload from '@/components/shared/upload/FileUpload'
+import HybridUpload from '@/components/shared/upload/HybridUpload'
 import { auth } from '@clerk/nextjs/server'
 import { getFirstChatByUserId } from '@/lib/actions/chat.action'
 
@@ -35,8 +36,11 @@ export default async function Page() {
         </div>
       </section>    
       <section>
-        <div className="w-full mt-4">
+        {/* <div className="w-full mt-4">
           {isAuth && <FileUpload />}
+        </div> */}
+        <div className="w-full mt-4">
+          {isAuth && <HybridUpload />}
         </div>
   
       </section>
