@@ -26,40 +26,40 @@ export const getSupabaseClient = () => {
       .collection("document");
     console.log("MongoDB collection selected");
 
-export async function loadDocsintoVectorDatabase(file_url: string)
-{
-    console.log("MongoDB VectorBase ------------------------------------>")
-    //  1. obtain the pdf -> downlaod and read from pdf
-    console.log("downloading Docs into file system");
-    const  localFilePath= await downloadFromURL(file_url);
-    console.log("file downloaded at ", localFilePath);
+// export async function loadDocsintoVectorDatabase(file_url: string)
+// {
+//     console.log("MongoDB VectorBase ------------------------------------>")
+//     //  1. obtain the pdf -> downlaod and read from pdf
+//     console.log("downloading Docs into file system");
+//     const  localFilePath= await downloadFromURL(file_url);
+//     console.log("file downloaded at ", localFilePath);
 
-try {
-    const fileContent = await getChunkedDocsFromPDF( localFilePath)
-    if(fileContent==null) 
-      {
-        throw new Error("Error processing file content");
-      }
-    console.log("File Content:", fileContent);
+// try {
+//     const fileContent = await getChunkedDocsFromPDF( localFilePath)
+//     if(fileContent==null) 
+//       {
+//         throw new Error("Error processing file content");
+//       }
+//     console.log("File Content:", fileContent);
 
  
-    const vectorStore = await getVectorStore(fileContent, client);
-    console.log("Vector Store:", vectorStore);
-    fs.unlink(localFilePath, (err) => {
-        if (err) {
-          console.error("Error deleting temporary file:", err);
-        } else {
-          console.log(`Temporary file ${localFilePath} deleted successfully.`);
-        }
-      });
+//     const vectorStore = await getVectorStore(fileContent, client);
+//     console.log("Vector Store:", vectorStore);
+//     fs.unlink(localFilePath, (err) => {
+//         if (err) {
+//           console.error("Error deleting temporary file:", err);
+//         } else {
+//           console.log(`Temporary file ${localFilePath} deleted successfully.`);
+//         }
+//       });
 
-      return localFilePath;
-} catch (error) {
+//       return localFilePath;
+// } catch (error) {
     
-    console.error("Error processing file:", error);
-    throw error;
+//     console.error("Error processing file:", error);
+//     throw error;
     
-}
+// }
 
     
 
@@ -68,7 +68,7 @@ try {
 
 
 
-}
+// }
 
 export function vectorStore(): MongoDBAtlasVectorSearch {
     const vectorStore: MongoDBAtlasVectorSearch = new MongoDBAtlasVectorSearch(
