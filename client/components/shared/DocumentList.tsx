@@ -81,7 +81,7 @@ export default   function DocumentList({ chats, chatUrl ,onSelectPdf,isPdfVisibl
             className="ml-2 p-1 rounded-md hover:bg-blue-500"
             onClick={onSelectPdf} // Trigger PDF visibility toggle
           >
-            {isPdfVisible ? <FaEye /> : <FaEyeSlash />} {/* Toggle icon based on PDF visibility */}
+            {isPdfVisible && chat.pdfUrl === chatUrl? <FaEye /> : <FaEyeSlash />} {/* Toggle icon based on PDF visibility */}
           </button>
         </div>
       ))}

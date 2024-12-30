@@ -1,6 +1,6 @@
 import { downloadFromURL } from "./parsing/DownloadFromVercel";
 import getChunkedDocsFromPDF from "./parsing/Pdfloader";
-import {getChunkedDocsFromSource} from "./parsing/Pdfloader";
+import {getChunkedDocsFromSource,getChunkedDocsFromUnstructured} from "./parsing/Pdfloader";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
@@ -19,11 +19,20 @@ export async function loadDocsintoVectorDatabase(file_url: string,file_type:stri
   //  1. obtain the pdf -> downlaod and read from pdf
   console.log("downloading Docs into file system");
   const localFilePath = await downloadFromURL(file_url,file_type);
-  console.log("file downloaded at ", localFilePath);
+  console.log("file downloaded at ", localFilePath,file_type);
 
   try {
-    // const fileContent = await getChunkedDocsFromPDF(localFilePath);
-    const fileContent = await getChunkedDocsFromSource(localFilePath);
+    let fileContent;
+    if(file_type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )
+    {
+       fileContent = await getChunkedDocsFromUnstructured(localFilePath);
+    }
+    else
+    {
+      fileContent = await getChunkedDocsFromPDF(localFilePath);
+    }
+    
+    // const fileContent = await getChunkedDocsFromUnstructured(localFilePath);
     if (fileContent == null) {
       throw new Error("Error processing file content");
     }

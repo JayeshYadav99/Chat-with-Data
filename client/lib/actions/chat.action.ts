@@ -51,7 +51,7 @@ export async function getChatsByUserId(params: getChatsByUserIdParams) {
       };
     }
   
-    const chats = await Chat.find({ userId: user._id });
+    const chats = (await Chat.find({ userId: user._id }).sort({createdAt:-1}));
     const transformedChats = chats.map(chat => ({
       
 
@@ -86,7 +86,7 @@ export async function getFirstChatByUserId(params: getFirstChatByUserId) {
       };
     }
 console.log("fetched user",user._id)
-    const chat = await Chat.findOne({ userId: user._id });
+    const chat = await Chat.findOne({ userId: user._id }).sort({createdAt:-1});
     if (!chat) {
       return {
         success: false,

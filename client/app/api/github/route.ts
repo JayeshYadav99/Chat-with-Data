@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { createChat } from "@/lib/actions/chat.action";
 
-import { LoadWebDocs } from "@/lib/Loaders";
+import { LoadGithubRepo } from "@/lib/Loaders";
 // /api/create-chat
 export async function POST(req: Request, res: Response) {
   console.log("create-chat");
@@ -14,7 +14,7 @@ export async function POST(req: Request, res: Response) {
     const body = await req.json();
     const {  url } = body;
 
-    const path = await LoadWebDocs(url);
+    const path = await LoadGithubRepo(url);
     const NewChat = await createChat({
       file_key:url,
       file_name:url,

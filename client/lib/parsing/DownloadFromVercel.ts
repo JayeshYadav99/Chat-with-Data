@@ -8,6 +8,8 @@ const mimeToExtensionMap: Record<string, string> = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
   'text/csv': '.csv',
   'text/plain': '.txt', // Default to .txt for plain text files
+  'application/epub+zip':'.epub',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation':'.pptx'
 };
 // Function to determine file extension from MIME type
 function getFileExtension(mimeType: string): string {
@@ -16,7 +18,7 @@ function getFileExtension(mimeType: string): string {
 export async function downloadFromURL(file_url: string,file_type:string): Promise<string> {
   console.log("downloading Docs into file system",file_url,file_type);
   const fileExtension = getFileExtension(file_type);
-  const modifiedType = file_type.split('/')[1] != 'plain' ? file_type.split('/')[1] : 'txt';
+ 
   return new Promise(async (resolve, reject) => {
     try {
       const response = await fetch(file_url);
@@ -32,6 +34,7 @@ export async function downloadFromURL(file_url: string,file_type:string): Promis
       
 
       // Write the buffer to a file
+      // @ts-ignore
       fs.writeFile(tempFilePath, buffer, (err) => {
         if (err) {
           console.error("Error writing file:", err);

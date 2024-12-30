@@ -29,7 +29,7 @@ const Navbar = () => {
                   strokeWidth={2}
                 />
               </div>
-              <span className="text-foreground">Chat with <span className="text-primary">Docs</span></span>
+              <span className="text-foreground">Chat with <span className="text-primary">Data </span></span>
             </Link>
             </div>
 

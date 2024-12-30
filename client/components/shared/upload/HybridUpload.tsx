@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { ArrowDown, FileText, Link, Loader2, Mic, ImageIcon, Youtube, FileIcon as FilePdf, FileSpreadsheet, FileIcon, FileCode } from 'lucide-react'
+import { ArrowDown, FileText, Link, Loader2, Mic,Database, ImageIcon, Youtube,CheckCircle2 ,Upload ,AlertCircle , FileIcon as FilePdf, FileSpreadsheet, FileIcon, Globe,Github,FileCode,BookOpen,Presentation } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { UploadToVercelStorage } from '@/lib/BlobStorage'
@@ -57,11 +57,14 @@ export default function DiverseFileUploadWithChips() {
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
       'text/csv': ['.csv'],
       'text/plain': ['.txt'], // Added support for .txt files
+      'application/epub+zip':['.epub'],
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation':['.pptx']
+
     },
     maxFiles: 1,
   })
 
-  const uploadFile = async (file: File) => {
+const uploadFile = async (file: File) => {
     try {
       setUploading(true)
       const { data, success } = await UploadToVercelStorage(file)
@@ -91,7 +94,16 @@ export default function DiverseFileUploadWithChips() {
     } finally {
       setUploading(false)
     }
+}
+
+const isValidGithubUrl = (url: string) => {
+  try {
+    const parsedUrl = new URL(url)
+    return parsedUrl.hostname === 'github.com' && parsedUrl.pathname.split('/').length >= 3
+  } catch {
+    return false
   }
+}
 
   const handleUrlSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -99,19 +111,36 @@ export default function DiverseFileUploadWithChips() {
 
     try {
       setUploading(true)
-      const response = await fetch('/api/docs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
-      })
+      if (isValidGithubUrl(url)) {
+        const response = await fetch('/api/github', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        })
 
-      if (!response.ok) throw new Error('Failed to create chat from URL')
+        if (!response.ok) throw new Error('Failed to create chat from GitHub repository')
 
-      const { chatId } = await response.json()
-      toast.success('Chat created from URL!')
-      router.push(`/chat/${chatId}`) 
+        const { chatId } = await response.json()
+        toast.success('Chat created from GitHub repository!')
+        router.push(`/chat/${chatId}`)
+      } else {
+        // Handle regular URL
+        const response = await fetch('/api/docs', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        })
+
+        if (!response.ok) throw new Error('Failed to create chat from URL')
+
+        const { chatId } = await response.json()
+        toast.success('Chat created from URL!')
+        router.push(`/chat/${chatId}`)
+      }
     } catch (error) {
       console.error(error)
       toast.error('Error creating chat from URL')
@@ -120,57 +149,106 @@ export default function DiverseFileUploadWithChips() {
     }
   }
 
-  const handleTextSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!text) return
+  const renderUrlSection = () => (
+    <div className="space-y-6">
+      <div className="grid gap-6">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+          <form onSubmit={handleUrlSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                
+                <Globe className="w-6 h-6 text-blue-500" />
+                <h2 className="text-xl font-semibold">Website  URL</h2>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="url" className="block text-sm font-medium text-gray-700">
+                  Enter a website URL 
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    {isValidGithubUrl(url) ? (
+                      <Github className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Globe className="h-5 w-5 text-gray-400" />
+                    )}
+                  </div>
+                  <input
+                    type="url"
+                    name="url"
+                    id="url"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder=" https://example.com"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                  />
+                </div>
+              </div>
 
-    try {
-      setUploading(true)
-      const response = await fetch('/api/create-chat-from-text', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      })
+              <div className="grid gap-4">
+                {/* <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <span>Supports GitHub repositories and public websites</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <AlertCircle className="h-4 w-4 text-yellow-500" />
+                  <span>Make sure the repository or website is publicly accessible</span>
+                </div> */}
+              </div>
+            </div>
 
-      if (!response.ok) throw new Error('Failed to create chat from text')
+            <button
+              type="submit"
+              disabled={uploading || !url}
+              className={`w-full h-12 text-base flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                uploading || !url ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              {uploading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-5 w-5" />
+                  {`Create Chat from ${isValidGithubUrl(url) ? 'GitHub Repository' : 'Website'}`}
+                </>
+              )}
+            </button>
+          </form>
+        </div>
 
-      const { chatId } = await response.json()
-      toast.success('Chat created from text!')
-      router.push(`/chat/${chatId}`)
-    } catch (error) {
-      console.error(error)
-      toast.error('Error creating chat from text')
-    } finally {
-      setUploading(false)
-    }
-  }
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-blue-100">
+                <Github className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold">GitHub Repository</h3>
+                <p className="text-sm text-gray-600">Import code and documentation</p>
+              </div>
+            </div>
+          </div>
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('Image too large (max 10MB)')
-      return
-    }
-    await uploadFile(file)
-  }
-
-  const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 50 * 1024 * 1024) {
-      toast.error('Audio file too large (max 50MB)')
-      return
-    }
-    await uploadFile(file)
-  }
-
-  const renderActiveSection = () => {
-    switch (activeSection) {
-      case 'document':
-        return (
+          <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-blue-100">
+                <Globe className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Website URL</h3>
+                <p className="text-sm text-gray-600">Import content from any website</p>
+              </div>
+            </div>
+          </div>
+        </div> */}
+      </div>
+    </div>
+  )
+  const renderDocumentSection = () => (
+  
+    
           <div
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer ${
@@ -179,10 +257,14 @@ export default function DiverseFileUploadWithChips() {
           >
             <input {...getInputProps()} />
             {uploading ? (
-                <>
-                  <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" />
-                  <p className="text-lg font-medium">Processing your document...</p>
-                </>
+                       <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+                       <div className="flex items-center space-x-3">
+                         <Database className="h-8 w-8 text-blue-500 animate-pulse" />
+                         <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+                       </div>
+                       <p className="text-lg font-medium text-blue-600">Running RAG Ingestion workflow...</p>
+                     </div>
+             
               ) : (
                 <div className="space-y-4">
                 <div className="flex justify-center space-x-4">
@@ -190,11 +272,13 @@ export default function DiverseFileUploadWithChips() {
                   <FileText className="h-10 w-10 text-blue-500" />
                   <FileSpreadsheet className="h-10 w-10 text-green-500" />
                   <FileCode className="h-10 w-10 text-yellow-500" />
+                  <BookOpen className="h-10 w-10 text-purple-500" /> {/* Add EPUB icon */}
+                  <Presentation className="h-10 w-10 text-orange-500" /> {/* Add PPT icon */}
                 </div>
                 <div>
                   <p className="text-lg font-medium mb-2">Drop your document here</p>
                   <p className="text-sm text-gray-500">
-                    Supported formats: PDF, DOCX, XLSX, CSV, TXT
+                    Supported formats: PDF, DOCX, XLSX, CSV, TXT ,EPUB ,PPTX
                   </p>
                   <p className="text-xs text-gray-400 mt-1">
                     Max file size: 50MB
@@ -213,163 +297,17 @@ export default function DiverseFileUploadWithChips() {
               Drag & drop a PDF, DOCX, XLSX, or CSV file here, or click to select
             </p> */}
           </div>
-        )
-      case 'url':
-        return (
-          <form onSubmit={handleUrlSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="url" className="block text-sm font-medium text-gray-700">
-                Website Docs URL
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Link className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="url"
-                  name="url"
-                  id="url"
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-                  placeholder="https://example.com"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={uploading || !url}
-              className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                  Processing
-                </>
-              ) : (
-                'Create Chat from URL'
-              )}
-            </button>
-          </form>
-        )
-      case 'image':
-        return (
-          <label
-            htmlFor="image-upload"
-            className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <ImageIcon className="w-10 h-10 mb-3 text-gray-400" />
-              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag and drop
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG or GIF (MAX. 10MB)</p>
-            </div>
-            <input
-              id="image-upload"
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-          </label>
-        )
-      case 'audio':
-        return (
-          <label
-            htmlFor="audio-upload"
-            className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <Mic className="w-10 h-10 mb-3 text-gray-400" />
-              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag and drop
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">MP3, WAV or M4A (MAX. 50MB)</p>
-            </div>
-            <input
-              id="audio-upload"
-              type="file"
-              className="hidden"
-              accept="audio/*"
-              onChange={handleAudioUpload}
-            />
-          </label>
-        )
-      case 'youtube':
-        return (
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="youtube-url" className="block text-sm font-medium text-gray-700">
-                YouTube URL
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Youtube className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="url"
-                  name="youtube-url"
-                  id="youtube-url"
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                />
-              </div>
-            </div>
-            <button
-              type="button"
-              disabled={true}
-              className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
-            >
-              Create Chat from YouTube (Coming Soon)
-            </button>
-          </div>
-        )
-      case 'text':
-        return (
-          <form onSubmit={handleTextSubmit} className="space-y-4">
-            <div >
-              <label htmlFor="text" className="block text-sm font-medium text-gray-700">
-                Enter or paste text
-              </label>
-              <textarea
-                id="text"
-                name="text"
-                rows={4}
-                className="shadow-sm mb-4 p-4 focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
-                placeholder="Paste your text here..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={uploading || !text}
-              className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                  Processing
-                </>
-              ) : (
-                'Create Chat from Text'
-              )}
-            </button>
-          </form>
-        )
-      default:
-        return null
-    }
-  }
+        
+  
+    
+            )
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Upload Your Content</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">Upload Your Data in more than 9 file formats</h1>
 
       <div className="mb-6 flex flex-wrap gap-2 justify-center">
+     
         <Chip
           section="document"
           icon={FileText}
@@ -398,7 +336,7 @@ export default function DiverseFileUploadWithChips() {
           isActive={activeSection === 'audio'}
           onClick={() => setActiveSection('audio')}
         /> */}
-        <Chip
+        {/* <Chip
           section="youtube"
           icon={Youtube}
           label="YouTube"
@@ -411,11 +349,13 @@ export default function DiverseFileUploadWithChips() {
           label="Text"
           isActive={activeSection === 'text'}
           onClick={() => setActiveSection('text')}
-        />
+        /> */}
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        {renderActiveSection()}
+      <div className="bg-gradient-to-b from-white to-gray-100 p-8 rounded-xl shadow-lg border border-gray-200">
+        {activeSection === 'url' && renderUrlSection()}
+        {activeSection === 'document' && renderDocumentSection()}
+        {/* Other sections remain unchanged */}
       </div>
     </div>
   )

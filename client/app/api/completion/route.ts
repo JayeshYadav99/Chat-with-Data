@@ -81,7 +81,14 @@ export async function POST(req: Request) {
   );
 
   //
+  const history = formatVercelMessages(messages);
   const standaloneQuestionChain = RunnableSequence.from([
+    
+      {
+        chat_history: (input) => input.history,
+        question: (input) => input.question
+      },
+  
     condenseQuestionPrompt,
     Googlemodel,
     new StringOutputParser(),
@@ -91,6 +98,9 @@ export async function POST(req: Request) {
   const documentPromise = new Promise<Document[]>((resolve) => {
     resolveWithDocuments = resolve;
   });
+    // Use standaloneQuestionChain to refine the current question
+    const refinedQuestion = await standaloneQuestionChain.invoke({question:currentMessageContent,history});
+    console.log("Refined Question:", refinedQuestion);
   const retriever = vectorstore.asRetriever({
     filter: { source: source },
     callbacks: [
@@ -104,32 +114,51 @@ export async function POST(req: Request) {
     ],
   });
   const retrievalChain = retriever.pipe(combineDocumentsFn);
-  const context = await retrievalChain.invoke(currentMessageContent);
-  const history = formatVercelMessages(messages);
+
+  const context = await retriever.pipe(combineDocumentsFn).invoke(refinedQuestion);
+
+  // const context = await retrievalChain.invoke(currentMessageContent);
+ 
   // console.log("context",context);
-  const prompt = {
-    role: "user",
-    content: `
+//   const prompt = {
+//     role: "user",
+//     content: `
 
-AI assistant is a brand new, powerful, human-like artificial intelligence.
-      The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
-      AI is a well-behaved and well-mannered individual.
-      AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
-      AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-      AI assistant is a big fan of Pinecone and Vercel.
-      START CONTEXT BLOCK
-      ${context}
-      END OF CONTEXT BLOCK
-      AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
-      If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
-      AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
-      AI assistant will not invent anything that is not drawn directly from the context.
+// AI assistant is a brand new, powerful, human-like artificial intelligence.
+//       The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
+//       AI is a well-behaved and well-mannered individual.
+//       AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
+//       AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
+//       AI assistant is a big fan of Pinecone and Vercel.
+//       START CONTEXT BLOCK
+//       ${context}
+//       END OF CONTEXT BLOCK
+//       AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
+//       If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
+//       AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
+//       AI assistant will not invent anything that is not drawn directly from the context.
 
 
-   .
+//    .
 
-    `,
-  };
+//     `,
+//   };
+const prompt = {
+  role: "user",
+  content: `
+You are an AI assistant designed to answer questions based on uploaded documents and provided context.  
+
+START CONTEXT BLOCK  
+${context}  
+END OF CONTEXT BLOCK  
+
+Use the information in the CONTEXT BLOCK to provide accurate and concise answers.  
+If the context does not contain the answer, respond: "I'm sorry, but I don't have the information to answer that question based on the provided documents."  
+
+Do not invent information outside the provided context. Focus entirely on delivering precise responses based on the given documents.  
+`,
+};
+
   // const modifiedMessages = messages.map((message: any, index: any) => {
   //   if (index === messages.length - 1) {
   //     return {
