@@ -29,8 +29,8 @@ export async function downloadFromURL(file_url: string,file_type:string): Promis
 
       // Create a temporary file path
     //   const filePath = path.join(process.cwd(), "public/assets", filename);
-      // const tempFilePath = path.join('/tmp', `file_${Date.now().toString()}.pdf`);
-      const tempFilePath = path.join(process.cwd(), "public/assets", `file_${Date.now().toString()}${fileExtension}`);
+      const tempFilePath = path.join('/tmp', `file_${Date.now().toString()}${fileExtension}`);
+      // const tempFilePath = path.join(process.cwd(), "public/assets", `file_${Date.now().toString()}${fileExtension}`);
       
 
       // Write the buffer to a file
