@@ -1,4 +1,4 @@
-import { Document, Schema, model,models } from 'mongoose';
+import { Document, Schema, model, models } from "mongoose";
 
 interface IDocument extends Document {
   content: string;
@@ -7,27 +7,27 @@ interface IDocument extends Document {
 }
 
 const DocumentSchema = new Schema<IDocument>({
-    content: {
-      type: String,
-      required: true,
-    },
-    metadata: {
-      type: Schema.Types.Mixed, // JSONB equivalent
-      required: true,
-    },
-    embedding: {
-      type: [Number], // Array of numbers
-      required: true,
-      validate: {
-        validator: function(arr: number[]) {
-          return arr.length === 768;
-        },
-        message: 'Embedding must be a 768-dimensional vector',
+  content: {
+    type: String,
+    required: true,
+  },
+  metadata: {
+    type: Schema.Types.Mixed, // JSONB equivalent
+    required: true,
+  },
+  embedding: {
+    type: [Number], // Array of numbers
+    required: true,
+    validate: {
+      validator: function (arr: number[]) {
+        return arr.length === 768;
       },
+      message: "Embedding must be a 768-dimensional vector",
     },
-  });
-  
-  // Export the model
-  const DocumentModel = models?.Document || model<IDocument>('Document', DocumentSchema);
-  export default DocumentModel;
-  
+  },
+});
+
+// Export the model
+const DocumentModel =
+  models?.Document || model<IDocument>("Document", DocumentSchema);
+export default DocumentModel;

@@ -1,11 +1,10 @@
-import mongoose, { Document, Schema,models,model } from 'mongoose';
+import mongoose, { Document, Schema, models, model } from "mongoose";
 
 // Define an enum for the role field
 enum UserRole {
-  USER = 'user',
-  SYSTEM = 'system',
-  ASSISTANT = 'assistant',
- 
+  USER = "user",
+  SYSTEM = "system",
+  ASSISTANT = "assistant",
 }
 
 // Define an interface representing a document in MongoDB.
@@ -18,13 +17,13 @@ interface IMessage extends Document {
 
 // Create a Schema corresponding to the document interface.
 const messageSchema: Schema<IMessage> = new Schema({
-  chatId: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat', required: true },
+  chatId: { type: mongoose.Schema.Types.ObjectId, ref: "Chat", required: true },
   content: { type: String, required: true },
   createdAt: { type: Date, default: Date.now, required: true },
-  role: { type: String, enum: Object.values(UserRole), required: true }
+  role: { type: String, enum: Object.values(UserRole), required: true },
 });
 
 // Create a Mongoose model.
-const Message =models?.Message || model<IMessage>('Message', messageSchema);
+const Message = models?.Message || model<IMessage>("Message", messageSchema);
 
 export default Message;

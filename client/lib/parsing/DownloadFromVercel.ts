@@ -1,24 +1,29 @@
-import fetch from 'node-fetch';
-import fs from 'fs';
-import path from 'path';
+import fetch from "node-fetch";
+import fs from "fs";
+import path from "path";
 // MIME type to file extension map
 const mimeToExtensionMap: Record<string, string> = {
-  'application/pdf': '.pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
-  'text/csv': '.csv',
-  'text/plain': '.txt', // Default to .txt for plain text files
-  'application/epub+zip':'.epub',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation':'.pptx'
+  "application/pdf": ".pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    ".docx",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
+  "text/csv": ".csv",
+  "text/plain": ".txt", // Default to .txt for plain text files
+  "application/epub+zip": ".epub",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+    ".pptx",
 };
 // Function to determine file extension from MIME type
 function getFileExtension(mimeType: string): string {
-  return mimeToExtensionMap[mimeType] || '.bin'; // Default to .bin for unknown types
+  return mimeToExtensionMap[mimeType] || ".bin"; // Default to .bin for unknown types
 }
-export async function downloadFromURL(file_url: string,file_type:string): Promise<string> {
-  console.log("downloading Docs into file system",file_url,file_type);
+export async function downloadFromURL(
+  file_url: string,
+  file_type: string,
+): Promise<string> {
+  console.log("downloading Docs into file system", file_url, file_type);
   const fileExtension = getFileExtension(file_type);
- 
+
   return new Promise(async (resolve, reject) => {
     try {
       const response = await fetch(file_url);
@@ -28,10 +33,12 @@ export async function downloadFromURL(file_url: string,file_type:string): Promis
       const buffer = await response.buffer();
 
       // Create a temporary file path
-    //   const filePath = path.join(process.cwd(), "public/assets", filename);
-      const tempFilePath = path.join('/tmp', `file_${Date.now().toString()}${fileExtension}`);
+      //   const filePath = path.join(process.cwd(), "public/assets", filename);
+      const tempFilePath = path.join(
+        "/tmp",
+        `file_${Date.now().toString()}${fileExtension}`,
+      );
       // const tempFilePath = path.join(process.cwd(), "public/assets", `file_${Date.now().toString()}${fileExtension}`);
-      
 
       // Write the buffer to a file
       // @ts-ignore

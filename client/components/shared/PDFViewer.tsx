@@ -1,8 +1,8 @@
-import React from 'react'
-import { Loader2 } from 'lucide-react'
+import React from "react";
+import { Loader2 } from "lucide-react";
 
 interface Props {
-  previewUrl: string
+  previewUrl: string;
 }
 
 export default function PdfPreviewUpload({ previewUrl }: Props) {
@@ -21,5 +21,5 @@ export default function PdfPreviewUpload({ previewUrl }: Props) {
         </div>
       )}
     </div>
-  )
+  );
 }

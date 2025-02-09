@@ -1,7 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export default function QueryForm() {
-  return (
-    <div>QueryForm</div>
-  )
+  return <div>QueryForm</div>;
 }

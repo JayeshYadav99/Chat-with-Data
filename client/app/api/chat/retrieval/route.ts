@@ -3,7 +3,6 @@ import { Message as VercelChatMessage, StreamingTextResponse } from "ai";
 import { TaskType } from "@google/generative-ai";
 import { createClient } from "@supabase/supabase-js";
 
-
 import { PromptTemplate } from "@langchain/core/prompts";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { Document } from "@langchain/core/documents";
@@ -66,7 +65,6 @@ Detailed Response:
 
 const answerPrompt = PromptTemplate.fromTemplate(ANSWER_TEMPLATE);
 
-
 /**
  * This handler initializes and calls a retrieval chain. It composes the chain using
  * LangChain Expression Language. See the docs for more information:
@@ -76,37 +74,40 @@ const answerPrompt = PromptTemplate.fromTemplate(ANSWER_TEMPLATE);
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    console.log("body",body);
+    console.log("body", body);
     const messages = body.messages ?? [];
-    const source=body.source;
-    console.log("source",source);
-   
+    const source = body.source;
+    console.log("source", source);
+
     const previousMessages = messages.slice(0, -1);
     const currentMessageContent = messages[messages.length - 1].content;
     const model = new ChatGoogleGenerativeAI({
-        model: "gemini-pro",
-        maxOutputTokens: 2048,
-        safetySettings: [
-          {
-            category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-            threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-          },
-        ],
-      });
+      model: "gemini-pro",
+      maxOutputTokens: 2048,
+      safetySettings: [
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+        },
+      ],
+    });
 
-      const client = createClient(
-        process.env.SUPABASE_URL ?? "",
-        process.env.SUPABASE_PRIVATE_KEY ?? ""
-      );
-    const vectorstore = new SupabaseVectorStore( new GoogleGenerativeAIEmbeddings({
+    const client = createClient(
+      process.env.SUPABASE_URL ?? "",
+      process.env.SUPABASE_PRIVATE_KEY ?? "",
+    );
+    const vectorstore = new SupabaseVectorStore(
+      new GoogleGenerativeAIEmbeddings({
         model: "embedding-001", // 768 dimensions
         taskType: TaskType.RETRIEVAL_DOCUMENT,
         title: "Document Embeddings",
-      }), {
-      client,
-      tableName: "documents",
-      queryName: "match_documents",
-    });
+      }),
+      {
+        client,
+        tableName: "documents",
+        queryName: "match_documents",
+      },
+    );
 
     /**
      * We use LangChain Expression Language to compose two chains.
@@ -154,16 +155,13 @@ export async function POST(req: NextRequest) {
       model,
     ]);
     // Step 2: Get the answer from the answerChain
-   
+
     // const answer = await answerChain.invoke({
     //   question: standaloneQuestionChain,
     //   chat_history: formatVercelMessages(previousMessages),
     // });
 
     // console.log("Answer:", answer);
-
-
-    
 
     const conversationalRetrievalQAChain = RunnableSequence.from([
       {
@@ -178,12 +176,12 @@ export async function POST(req: NextRequest) {
       question: currentMessageContent,
       chat_history: formatVercelMessages(previousMessages),
     });
-   
+
     for await (const chunk of await conversationalRetrievalQAChain.stream({
       question: currentMessageContent,
       chat_history: formatVercelMessages(previousMessages),
     })) {
-      console.log("chunk",chunk);
+      console.log("chunk", chunk);
     }
     // Step 3: Once the stream is done, save the accumulated response to the database
     const documents = await documentPromise;

@@ -1,6 +1,5 @@
-
 import { NextResponse } from "next/server";
-import {getMessagesForChatId} from "@/lib/actions/message.action";
+import { getMessagesForChatId } from "@/lib/actions/message.action";
 export const runtime = "edge";
 
 export const POST = async (req: Request) => {

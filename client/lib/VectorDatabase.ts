@@ -1,6 +1,9 @@
 import { downloadFromURL } from "./parsing/DownloadFromVercel";
 import getChunkedDocsFromPDF from "./parsing/Pdfloader";
-import {getChunkedDocsFromSource,getChunkedDocsFromUnstructured} from "./parsing/Pdfloader";
+import {
+  getChunkedDocsFromSource,
+  getChunkedDocsFromUnstructured,
+} from "./parsing/Pdfloader";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
@@ -10,28 +13,31 @@ import fs from "fs";
 export const getSupabaseClient = () => {
   const client = createClient(
     process.env.SUPABASE_URL ?? "",
-    process.env.SUPABASE_PRIVATE_KEY ?? ""
+    process.env.SUPABASE_PRIVATE_KEY ?? "",
   );
   return client;
 };
-export async function loadDocsintoVectorDatabase(file_url: string,file_type:string) {
+export async function loadDocsintoVectorDatabase(
+  file_url: string,
+  file_type: string,
+) {
   console.log("Supabase VectorBase ------------------------------------>");
   //  1. obtain the pdf -> downlaod and read from pdf
   console.log("downloading Docs into file system");
-  const localFilePath = await downloadFromURL(file_url,file_type);
-  console.log("file downloaded at ", localFilePath,file_type);
+  const localFilePath = await downloadFromURL(file_url, file_type);
+  console.log("file downloaded at ", localFilePath, file_type);
 
   try {
     let fileContent;
-    if(file_type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )
-    {
-       fileContent = await getChunkedDocsFromUnstructured(localFilePath);
-    }
-    else
-    {
+    if (
+      file_type ===
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ) {
+      fileContent = await getChunkedDocsFromUnstructured(localFilePath);
+    } else {
       fileContent = await getChunkedDocsFromPDF(localFilePath);
     }
-    
+
     // const fileContent = await getChunkedDocsFromUnstructured(localFilePath);
     if (fileContent == null) {
       throw new Error("Error processing file content");
@@ -68,7 +74,7 @@ async function getVectorStore(fileContent: any, client: any) {
         client,
         tableName: "documents",
         queryName: "match_documents",
-      }
+      },
     );
     return vectorStore;
   } catch (error) {

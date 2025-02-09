@@ -41,7 +41,7 @@ const Page = async ({ params: { id } }: Props) => {
   }
 
   const currentChat = chats.find(
-    (chat: any) => chat._id.toString() === id.toString()
+    (chat: any) => chat._id.toString() === id.toString(),
   );
   console.log("why", currentChat);
   const isPdfVisible = false;

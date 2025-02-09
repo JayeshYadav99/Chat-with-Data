@@ -1,9 +1,9 @@
-"use server"
+"use server";
 import { connectToDatabase } from "@/lib/db";
 import Chat from "@/lib/db/models/chat.model";
 import { handleError } from "@/lib/utils";
 import User from "../db/models/user.model";
-import { del } from '@vercel/blob';
+import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 interface CreateChatParams {
   file_key: string;
@@ -16,8 +16,8 @@ interface CreateChatParams {
 export async function createChat(params: CreateChatParams) {
   try {
     await connectToDatabase();
-    const { file_key, file_name, userId, url ,path} = params;
-    console.log(params)
+    const { file_key, file_name, userId, url, path } = params;
+    console.log(params);
     const user = await User.findOne({ clerkId: userId });
     if (!user) throw new Error("User not found");
 
@@ -27,10 +27,9 @@ export async function createChat(params: CreateChatParams) {
       userId: user._id,
       fileKey: file_key,
       source: path,
-      messages:[],
-
+      messages: [],
     });
-    console.log("New Chat",newChat)
+    console.log("New Chat", newChat);
     return JSON.parse(JSON.stringify(newChat));
   } catch (error) {
     handleError(error);
@@ -50,17 +49,15 @@ export async function getChatsByUserId(params: getChatsByUserIdParams) {
         data: null,
       };
     }
-  
-    const chats = (await Chat.find({ userId: user._id }).sort({createdAt:-1}));
-    const transformedChats = chats.map(chat => ({
-      
 
+    const chats = await Chat.find({ userId: user._id }).sort({ createdAt: -1 });
+    const transformedChats = chats.map((chat) => ({
       _id: chat._id.toString(),
       pdfName: chat.pdfName,
       pdfUrl: chat.pdfUrl,
       fileKey: chat.fileKey,
       userId: chat.userId.toString(),
-      source:chat.source
+      source: chat.source,
     }));
     return {
       success: true,
@@ -85,22 +82,23 @@ export async function getFirstChatByUserId(params: getFirstChatByUserId) {
         data: null,
       };
     }
-console.log("fetched user",user._id)
-    const chat = await Chat.findOne({ userId: user._id }).sort({createdAt:-1});
+    console.log("fetched user", user._id);
+    const chat = await Chat.findOne({ userId: user._id }).sort({
+      createdAt: -1,
+    });
     if (!chat) {
       return {
         success: false,
         data: null,
       };
     }
- 
+
     return {
       success: true,
       data: chat._id.toString(),
     };
-  }
-  catch (error) { 
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     handleError(error);
   }
 }
@@ -109,15 +107,15 @@ interface DeleteChatParams {
   chatUrl: string;
 }
 export async function DeleteChatById(params: DeleteChatParams) {
-  const { chatId, chatUrl} = params;
-  
+  const { chatId, chatUrl } = params;
+
   try {
     await connectToDatabase();
-console.log("chatId",chatId)
+    console.log("chatId", chatId);
     // Delete chat from database
     const chat = await Chat.findByIdAndDelete(chatId);
     if (!chat) {
-      console.error("Chat not found")
+      console.error("Chat not found");
       return {
         success: false,
         data: null,
@@ -126,7 +124,7 @@ console.log("chatId",chatId)
 
     // Delete file from Vercel Blob Storage
     const deleteResponse = await del(chatUrl);
-    revalidatePath(`/chat/${chat._id}`)
+    revalidatePath(`/chat/${chat._id}`);
     return {
       success: true,
       data: chat._id.toString(),
@@ -153,16 +151,15 @@ export async function getSharedChatDetails(chatId: string) {
       source: chat.source,
       fileKey: chat.fileKey,
       pdfUrl: chat.pdfUrl,
-      pdfName: chat.pdfName
+      pdfName: chat.pdfName,
       // Add any other details you want to display
     };
   } catch (error) {
-    console.error('Error fetching shared chat details:', error);
+    console.error("Error fetching shared chat details:", error);
     return null;
   }
 }
-interface  UpdateChatStatusParams
-{
+interface UpdateChatStatusParams {
   chatId: string;
   isPublic: boolean;
 }
@@ -170,12 +167,12 @@ export async function updateChatStatus(params: UpdateChatStatusParams) {
   try {
     await connectToDatabase();
     const { chatId, isPublic } = params;
-    console.log(params)
+    console.log(params);
 
     const updatedChat = await Chat.findByIdAndUpdate(
       chatId,
-      { isPublic},
-      { new: true }
+      { isPublic },
+      { new: true },
     );
 
     if (!updatedChat) {

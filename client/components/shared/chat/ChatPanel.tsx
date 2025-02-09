@@ -1,10 +1,10 @@
 "use client";
 
 import { useChat } from "ai/react";
-import { Loader2, RefreshCw, Share2,User, Bot,FileText } from "lucide-react";
+import { Loader2, RefreshCw, Share2, User, Bot, FileText } from "lucide-react";
 import { useState, useRef, useEffect, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 import { clearMessages } from "@/lib/actions/message.action";
 import { ChatMessageBubble } from "@/components/shared/ChatMessageBubble";
 import { useToast } from "@/components/hooks/use-toast";
@@ -14,22 +14,24 @@ import SharedChatReplication from "../SharedChatReplication";
 interface Props {
   chatSource: string;
   currentChat: any;
-  isShare:any
-
-
+  isShare: any;
 }
 
-export default function ChatInterface({ chatSource, currentChat,isShare }: Props) {
+export default function ChatInterface({
+  chatSource,
+  currentChat,
+  isShare,
+}: Props) {
   const { toast } = useToast();
-  const [isLoadingMessages, setIsLoadingMessages] = useState(true)
+  const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   const [initialMessages, setInitialMessages] = useState<any[]>([]);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const skeletonMessages = [
-    { id: 'skeleton-1', role: 'user' as const, content: '' },
-    { id: 'skeleton-2', role: 'assistant' as const, content: '' },
-    { id: 'skeleton-3', role: 'user' as const, content: '' },
-    { id: 'skeleton-4', role: 'assistant' as const, content: '' },
-  ]
+    { id: "skeleton-1", role: "user" as const, content: "" },
+    { id: "skeleton-2", role: "assistant" as const, content: "" },
+    { id: "skeleton-3", role: "user" as const, content: "" },
+    { id: "skeleton-4", role: "assistant" as const, content: "" },
+  ];
   const placeholder = "Ask me anything about the document";
   const {
     messages,
@@ -98,10 +100,9 @@ export default function ChatInterface({ chatSource, currentChat,isShare }: Props
     }
   };
 
- 
   useEffect(() => {
     const fetchMessages = async () => {
-      setIsLoadingMessages(true)
+      setIsLoadingMessages(true);
       try {
         const response = await getMessagesForChatId(currentChat._id);
         if (response.success) {
@@ -112,8 +113,8 @@ export default function ChatInterface({ chatSource, currentChat,isShare }: Props
         }
       } catch (error) {
         console.error("Failed to fetch messages:", error);
-      }finally {
-        setIsLoadingMessages(false)
+      } finally {
+        setIsLoadingMessages(false);
       }
     };
 
@@ -130,82 +131,74 @@ export default function ChatInterface({ chatSource, currentChat,isShare }: Props
   return (
     <div className="flex flex-col items-center max-h-[95vh] md:p-8 rounded ">
       <div className="flex justify-between w-full mb-4">
-      {!isShare ? (
+        {!isShare ? (
           <>
             <Button onClick={resetChat} variant="outline">
-            <RefreshCw className="mr-2 h-4 w-4 text-green-500" />
+              <RefreshCw className="mr-2 h-4 w-4 text-green-500" />
               Reset Chat
             </Button>
             <ShareChatModal chatId={currentChat._id} messages={messages} />
           </>
         ) : (
-<></>
+          <></>
         )}
-     
       </div>
       <div
         ref={messageContainerRef}
         className="flex flex-col w-full overflow-y-auto mb-4 transition-[flex-grow]  ease-in-out"
       >
-        {isLoadingMessages ? (
-          skeletonMessages.map((m) => (
-            <ChatMessageBubble
-            key={m.id}
-            message={m}
-            aiEmoji="🤖"
-            sources={[]}
-            isLoading={true}
-          >
-           
-          </ChatMessageBubble>
-             
-          ))
-        ) : (
-          [...messages].map((m, i) => (
-            <ChatMessageBubble
-              key={m.id}
-              message={m}
-              aiEmoji="🤖"
-              sources={sourcesForMessages[i.toString()]}
-
-            />
-          ))
-        )}
-    
+        {isLoadingMessages
+          ? skeletonMessages.map((m) => (
+              <ChatMessageBubble
+                key={m.id}
+                message={m}
+                aiEmoji="🤖"
+                sources={[]}
+                isLoading={true}
+              ></ChatMessageBubble>
+            ))
+          : [...messages].map((m, i) => (
+              <ChatMessageBubble
+                key={m.id}
+                message={m}
+                aiEmoji="🤖"
+                sources={sourcesForMessages[i.toString()]}
+              />
+            ))}
       </div>
 
-  {!isShare ? (    <form
-    onSubmit={sendMessage}
-    className="flex  items-center  w-full flex-col"
-  >
-    <div className="flex w-full  ">
-      <input
-        className=" grow bg-slate-500 mr-4 p-4 rounded"
-        name="prompt"
-        id="input"
-        value={input}
-        placeholder={placeholder ?? "What's it like to be a pirate?"}
-        onChange={handleInputChange}
-      />
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="shrink-0 px-8 py-4 bg-sky-600 rounded w-28 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200 ease-in-out disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="h-10 w-10 animate-spin" />
-          </>
-        ) : (
-          "Send"
-        )}
-      </button>
-    </div>
-  </form> ):(
-    <SharedChatReplication  originalChat={currentChat}/>
-  )
-
-}  
+      {!isShare ? (
+        <form
+          onSubmit={sendMessage}
+          className="flex  items-center  w-full flex-col"
+        >
+          <div className="flex w-full  ">
+            <input
+              className=" grow bg-slate-500 mr-4 p-4 rounded"
+              name="prompt"
+              id="input"
+              value={input}
+              placeholder={placeholder ?? "What's it like to be a pirate?"}
+              onChange={handleInputChange}
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="shrink-0 px-8 py-4 bg-sky-600 rounded w-28 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200 ease-in-out disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-10 w-10 animate-spin" />
+                </>
+              ) : (
+                "Send"
+              )}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <SharedChatReplication originalChat={currentChat} />
+      )}
     </div>
   );
 }

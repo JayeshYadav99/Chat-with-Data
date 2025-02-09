@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { createChat } from "@/lib/actions/chat.action";
 import { replicateMessages } from "@/lib/actions/message.action";
 
-
 export async function POST(req: Request) {
   const { userId } = auth();
   if (!userId) {
@@ -11,16 +10,14 @@ export async function POST(req: Request) {
   }
 
   try {
-  
-
     const body = await req.json();
-    console.log("body",body)
+    console.log("body", body);
     const { _id, pdfName, pdfUrl, fileKey, source } = body.originalChat;
 
     // Create a new chat based on the original chat
     const newChat = await createChat({
-        file_key: fileKey,
-        file_name: pdfName,
+      file_key: fileKey,
+      file_name: pdfName,
       userId,
       url: pdfUrl,
       path: source,
@@ -42,13 +39,13 @@ export async function POST(req: Request) {
         success: true,
         newChatId: newChat._id,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    console.error('Error replicating chat:', error);
+    console.error("Error replicating chat:", error);
     return NextResponse.json(
       { error: "Failed to replicate chat" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

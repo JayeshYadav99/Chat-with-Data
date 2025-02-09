@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText } from "lucide-react";
 import { useToast } from "@/components/hooks/use-toast";
@@ -8,7 +8,9 @@ interface SharedChatReplicationProps {
   originalChat: any;
 }
 
-export default function SharedChatReplication({ originalChat }: SharedChatReplicationProps) {
+export default function SharedChatReplication({
+  originalChat,
+}: SharedChatReplicationProps) {
   const [isReplicating, setIsReplicating] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -16,17 +18,16 @@ export default function SharedChatReplication({ originalChat }: SharedChatReplic
   const replicateSharedChat = async () => {
     setIsReplicating(true);
     try {
-        
-      const response = await fetch('/api/replicate-chat', {
-        method: 'POST',
+      const response = await fetch("/api/replicate-chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ originalChat }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to replicate chat');
+        throw new Error("Failed to replicate chat");
       }
 
       const data = await response.json();
@@ -38,10 +39,10 @@ export default function SharedChatReplication({ originalChat }: SharedChatReplic
         });
         router.push(`/chat/${data.newChatId}`);
       } else {
-        throw new Error(data.message || 'Failed to replicate chat');
+        throw new Error(data.message || "Failed to replicate chat");
       }
     } catch (error) {
-      console.error('Error replicating chat:', error);
+      console.error("Error replicating chat:", error);
       toast({
         title: "Failed to replicate chat",
         description: "Please try again later.",
@@ -67,7 +68,7 @@ export default function SharedChatReplication({ originalChat }: SharedChatReplic
         ) : (
           <>
             <FileText className="mr-2 h-4 w-4" />
-             Fork this Chat
+            Fork this Chat
           </>
         )}
       </Button>

@@ -1,13 +1,13 @@
-import { embedMany } from 'ai';
-import { google } from '@ai-sdk/google';
+import { embedMany } from "ai";
+import { google } from "@ai-sdk/google";
 
-const embeddingModel = google.embedding('text-embedding-004');
+const embeddingModel = google.embedding("text-embedding-004");
 
 const generateChunks = (input: string): string[] => {
   return input
     .trim()
-    .split('.')
-    .filter(i => i !== '');
+    .split(".")
+    .filter((i) => i !== "");
 };
 
 export const generateEmbeddings = async (

@@ -1,8 +1,8 @@
 {
-  "name": "AI Docs",
-  "short_name": "AI Docs",
+  "name": "Chat with Data",
+  "short_name": "Chat with Data",
   "start_url": "/",
-"description": "An AI Docs website.",
+  "description": "An Chat with Data website.",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

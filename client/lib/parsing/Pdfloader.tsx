@@ -52,29 +52,20 @@ export async function getChunkedDocsFromSource(PATH: string) {
   try {
     console.log("PATH", PATH);
     const extension = path.extname(PATH).toLowerCase(); // Get file extension in lowercase
-    const loader = new MultiFileLoader(
-      [
-        PATH,
-      ],
-      {
-        ".json": (path) => new JSONLoader(path, "/texts"),
-        ".jsonl": (path) => new JSONLinesLoader(path, "/html"),
-        ".txt": (path) => new TextLoader(path),
+    const loader = new MultiFileLoader([PATH], {
+      ".json": (path) => new JSONLoader(path, "/texts"),
+      ".jsonl": (path) => new JSONLinesLoader(path, "/html"),
+      ".txt": (path) => new TextLoader(path),
 
-        ".csv": (path) => new CSVLoader(path,{
-          separator:',',
-   
+      ".csv": (path) =>
+        new CSVLoader(path, {
+          separator: ",",
         }),
-        ".pdf": (path) => new PDFLoader(path),
-        ".docx":(path) => new  DocxLoader(path),
-        ".epub":(path) => new EPubLoader(path),
-        ".pptx":(path)=> new PPTXLoader(path),
-        
-        
-        
-
-      }
-    );
+      ".pdf": (path) => new PDFLoader(path),
+      ".docx": (path) => new DocxLoader(path),
+      ".epub": (path) => new EPubLoader(path),
+      ".pptx": (path) => new PPTXLoader(path),
+    });
     // const loader = new UnstructuredLoader(
     // PATH
     // );
@@ -95,7 +86,6 @@ export async function getChunkedDocsFromSource(PATH: string) {
             return doc;
           })
         : rawDocs;
-
 
     // const cleanedDocs =
     //   extension === ".pdf"
@@ -118,18 +108,15 @@ export async function getChunkedDocsFromSource(PATH: string) {
   }
 }
 
-export async function getChunkedDocsFromUnstructured(PATH:string){
+export async function getChunkedDocsFromUnstructured(PATH: string) {
   try {
     console.log("PATH", PATH);
     const extension = path.extname(PATH).toLowerCase(); // Get file extension in lowercase
-    
-    const loader = new UnstructuredLoader(
-    PATH
-    ,{
-      strategy:"hi_res",
-      chunkingStrategy:"by_title"
-    }
-    );
+
+    const loader = new UnstructuredLoader(PATH, {
+      strategy: "hi_res",
+      chunkingStrategy: "by_title",
+    });
     const rawDocs = await loader.load();
     // Include the source in the metadata of each document
     const enrichedDocs = rawDocs.map((doc) => ({
@@ -147,7 +134,6 @@ export async function getChunkedDocsFromUnstructured(PATH:string){
             return doc;
           })
         : enrichedDocs;
-
 
     // const cleanedDocs =
     //   extension === ".pdf"

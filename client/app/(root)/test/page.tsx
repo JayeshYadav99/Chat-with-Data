@@ -5,7 +5,12 @@ import { useCompletion } from "ai/react";
 
 export default function Page() {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { completion, input, handleInputChange, handleSubmit: originalHandleSubmit } = useCompletion({
+  const {
+    completion,
+    input,
+    handleInputChange,
+    handleSubmit: originalHandleSubmit,
+  } = useCompletion({
     api: "/api/pop",
   });
 
@@ -17,7 +22,6 @@ export default function Page() {
 
   return (
     <div>
-
       ssrsrsr
       <form
         onSubmit={handleSubmit}
@@ -30,4 +34,3 @@ export default function Page() {
     </div>
   );
 }
-

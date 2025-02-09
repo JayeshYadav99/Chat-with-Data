@@ -40,7 +40,7 @@ const ChatUI = ({ chats, currentChat }: any) => {
               <div className="w-full border-black border-4 p-6">
                 <header className="flex justify-center items-center">
                   <h1 className="text-2xl text-black font-bold text-center">
-                  {isPdfSource ? "PDF Preview" : "Web Docs Preview"}
+                    {isPdfSource ? "PDF Preview" : "Web Docs Preview"}
                   </h1>
                 </header>
                 <div className="h-[calc(100%-2rem)] overflow-hidden p-2">

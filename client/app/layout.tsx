@@ -13,8 +13,25 @@ import {
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Docs",
-  description: "Created By Jayesh Yadav",
+  title: {
+    template: "Chat with Data",
+    default: "Chat with Data",
+    absolute: "Chat with Data",
+  },
+  description: "AI-powered platform for document analysis and conversation",
+  keywords: [
+    "AI",
+    "free pdf",
+    "free chat",
+    "document processing",
+    "chat interface",
+    "Langchain",
+    "Next.js",
+    "Vercel AI SDK",
+    "Supabase",
+    "Vercel Blob Storage",
+  ],
+  authors: [{ name: "Jayesh Yadav" }],
 };
 
 export default function RootLayout({
@@ -54,7 +71,7 @@ export default function RootLayout({
         </head>
         <body className={inter.className}>
           <main>{children}</main>
-          <Toaster/>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

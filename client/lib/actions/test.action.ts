@@ -1,5 +1,5 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { LangChainAdapter } from 'ai';
+import { LangChainAdapter } from "ai";
 
 export const maxDuration = 60;
 
