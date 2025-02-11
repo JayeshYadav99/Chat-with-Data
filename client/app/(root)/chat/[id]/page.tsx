@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-
+import React from "react";
 import { auth } from "@clerk/nextjs/server";
-
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getChatsByUserId } from "@/lib/actions/chat.action";
-import ChatUI from "@/components/shared/ChatUI";
+import ChatUI from "@/components/shared/chat/chat-ui";
+import { ChatResponse } from "@/types/chat";
 
 export const metadata: Metadata = {
   title: "Chats",
@@ -23,10 +22,9 @@ const Page = async ({ params: { id } }: Props) => {
     return redirect("/sign-in");
   }
 
-  const { success, data } = (await getChatsByUserId({ userId })) as {
-    success: boolean;
-    data: string | null;
-  };
+  const { success, data } = (await getChatsByUserId({
+    userId,
+  })) as ChatResponse;
   const chats = data ? JSON.parse(data) : null;
 
   if (!success) {
@@ -41,16 +39,8 @@ const Page = async ({ params: { id } }: Props) => {
   }
 
   const currentChat = chats.find(
-    (chat: any) => chat._id.toString() === id.toString(),
+    (chat: any) => chat._id.toString() === id.toString()
   );
-  console.log("why", currentChat);
-  const isPdfVisible = false;
-
-  // const [isPdfVisible, setPdfVisible] = useState(false);
-
-  // const handleSelectPdf = () => {
-  //   setPdfVisible(!isPdfVisible);
-  // };
 
   return (
     <div>

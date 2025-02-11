@@ -1,14 +1,9 @@
-import React, { useState } from "react";
-
+import React from "react";
 import { auth } from "@clerk/nextjs/server";
-
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import {
-  getChatsByUserId,
-  getSharedChatDetails,
-} from "@/lib/actions/chat.action";
-import ChatShare from "@/components/shared/chat/ChatShare";
+import { getSharedChatDetails } from "@/lib/actions/chat.action";
+import ChatShare from "@/components/shared/chat/chat-share";
 
 export const metadata: Metadata = {
   title: "Chats",
@@ -21,15 +16,13 @@ interface Props {
 }
 
 const Page = async ({ params: { id } }: Props) => {
-  const { userId } = await auth();
+  const { userId } = auth();
   if (!userId) {
     return redirect("/sign-in");
   }
 
   const currentChatDetails = await getSharedChatDetails(id);
   const currentChat = { _id: id, ...currentChatDetails };
-  console.log("why", currentChat, currentChatDetails);
-  const isPdfVisible = false;
 
   return (
     <div>

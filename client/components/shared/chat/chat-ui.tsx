@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import ChatWindow from "@/components/shared/Chatwindow";
 import { motion } from "framer-motion";
-import ChatSidebar from "@/components/shared/ChatSidebar";
-import PdfViewer from "@/components/shared/PDFViewer";
-import ChatPanel from "@/components/shared/chat/ChatPanel";
+import ChatSidebar from "@/components/shared/chat/chat-sidebar";
+import PdfViewer from "@/components/shared/chat/pdf-viewer";
+import ChatPanel from "@/components/shared/chat/chat-panel";
 const ChatUI = ({ chats, currentChat }: any) => {
   const [isPdfVisible, setPdfVisible] = useState(false);
   const isPdfSource = currentChat?.source?.endsWith(".pdf");

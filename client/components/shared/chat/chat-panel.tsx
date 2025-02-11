@@ -4,13 +4,12 @@ import { useChat } from "ai/react";
 import { Loader2, RefreshCw, Share2, User, Bot, FileText } from "lucide-react";
 import { useState, useRef, useEffect, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { clearMessages } from "@/lib/actions/message.action";
-import { ChatMessageBubble } from "@/components/shared/ChatMessageBubble";
+import { ChatMessageBubble } from "@/components/shared/chat/chat-bubble";
 import { useToast } from "@/components/hooks/use-toast";
 import { getMessagesForChatId } from "@/lib/actions/message.action";
 import ShareChatModal from "../modal/ShareChatModal";
-import SharedChatReplication from "../SharedChatReplication";
+import SharedChatReplication from "./share-chat-replicate";
 interface Props {
   chatSource: string;
   currentChat: any;
@@ -184,7 +183,7 @@ export default function ChatInterface({
             <button
               type="submit"
               disabled={isLoading}
-              className="shrink-0 px-8 py-4 bg-sky-600 rounded w-28 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200 ease-in-out disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
+              className="shrink-0  bg-sky-600  w-28 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200 ease-in-out disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
             >
               {isLoading ? (
                 <>

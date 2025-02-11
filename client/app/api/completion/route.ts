@@ -1,26 +1,16 @@
 import { streamText, StreamData } from "ai";
 import { TaskType } from "@google/generative-ai";
 import { createClient } from "@supabase/supabase-js";
-import { google } from "@ai-sdk/google";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { Googlemodel } from "@/lib/rag/model";
 import { createOpenAI } from "@ai-sdk/openai";
-
 import { createMessage } from "@/lib/actions/message.action";
-
 import { Document } from "@langchain/core/documents";
 import { condenseQuestionPrompt } from "@/lib/rag/prompts";
-import {
-  BytesOutputParser,
-  StringOutputParser,
-} from "@langchain/core/output_parsers";
-type VercelChatMessage = {
-  role: string;
-  content: string;
-};
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { VercelChatMessage } from "@/types/chat";
 
 const formatVercelMessages = (chatHistory: VercelChatMessage[]) => {
   const formattedDialogueTurns = chatHistory.map((message) => {
@@ -63,7 +53,7 @@ export async function POST(req: Request) {
   //Intializing Supabase Client
   const client = createClient(
     process.env.SUPABASE_URL ?? "",
-    process.env.SUPABASE_PRIVATE_KEY ?? "",
+    process.env.SUPABASE_PRIVATE_KEY ?? ""
   );
 
   //Calling vectorstore
@@ -77,7 +67,7 @@ export async function POST(req: Request) {
       client,
       tableName: "documents",
       queryName: "match_documents",
-    },
+    }
   );
 
   //
@@ -121,31 +111,6 @@ export async function POST(req: Request) {
     .pipe(combineDocumentsFn)
     .invoke(refinedQuestion);
 
-  // const context = await retrievalChain.invoke(currentMessageContent);
-
-  // console.log("context",context);
-  //   const prompt = {
-  //     role: "user",
-  //     content: `
-
-  // AI assistant is a brand new, powerful, human-like artificial intelligence.
-  //       The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
-  //       AI is a well-behaved and well-mannered individual.
-  //       AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
-  //       AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-  //       AI assistant is a big fan of Pinecone and Vercel.
-  //       START CONTEXT BLOCK
-  //       ${context}
-  //       END OF CONTEXT BLOCK
-  //       AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
-  //       If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
-  //       AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
-  //       AI assistant will not invent anything that is not drawn directly from the context.
-
-  //    .
-
-  //     `,
-  //   };
   const prompt = {
     role: "user",
     content: `
@@ -182,8 +147,8 @@ Do not invent information outside the provided context. Focus entirely on delive
           pageContent: doc.pageContent.slice(0, 50) + "...",
           metadata: doc.metadata,
         };
-      }),
-    ),
+      })
+    )
   ).toString("base64");
 
   // Append additional data
