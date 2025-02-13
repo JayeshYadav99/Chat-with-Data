@@ -35,8 +35,6 @@ export default function ChatSidebar({
         onSelectPdf={onSelectPdf}
         isPdfVisible={isPdfVisible}
       />
-
-      {/* <DocumentList/> */}
     </div>
   );
 }

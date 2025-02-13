@@ -10,6 +10,7 @@ import { useToast } from "@/components/hooks/use-toast";
 import { getMessagesForChatId } from "@/lib/actions/message.action";
 import ShareChatModal from "../modal/ShareChatModal";
 import SharedChatReplication from "./share-chat-replicate";
+import { skeletonMessages } from "@/utils";
 interface Props {
   chatSource: string;
   currentChat: any;
@@ -25,12 +26,7 @@ export default function ChatInterface({
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   const [initialMessages, setInitialMessages] = useState<any[]>([]);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
-  const skeletonMessages = [
-    { id: "skeleton-1", role: "user" as const, content: "" },
-    { id: "skeleton-2", role: "assistant" as const, content: "" },
-    { id: "skeleton-3", role: "user" as const, content: "" },
-    { id: "skeleton-4", role: "assistant" as const, content: "" },
-  ];
+
   const placeholder = "Ask me anything about the document";
   const {
     messages,
@@ -50,8 +46,6 @@ export default function ChatInterface({
     initialMessages,
 
     onResponse(response) {
-      // console.log("response", messages);
-      // console.log("response", response);
       const sourcesHeader = response.headers.get("sources");
       const sources = sourcesHeader
         ? JSON.parse(Buffer.from(sourcesHeader, "base64").toString("utf8"))
@@ -68,17 +62,14 @@ export default function ChatInterface({
   const [sourcesForMessages, setSourcesForMessages] = useState<
     Record<string, any>
   >({});
+
   const sendMessage = async (e: FormEvent) => {
     e.preventDefault();
-    // console.log("callled------------->");
-    // setMessages(messages.concat({ id: messages.length.toString(), content: input, role: "user" }));
     handleSubmit(e);
   };
   const resetChat = async () => {
     try {
-      console.log("clearing chat");
       const response = await clearMessages(currentChat._id);
-      console.log("response", response);
       if (response.success) {
         toast({
           title: "Chat Cleared Successfully",
@@ -105,7 +96,6 @@ export default function ChatInterface({
       try {
         const response = await getMessagesForChatId(currentChat._id);
         if (response.success) {
-          console.log(response.messages);
           setInitialMessages(response.messages);
         } else {
           console.error(response.message);
