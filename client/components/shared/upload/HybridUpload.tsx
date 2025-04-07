@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useSession, useUser } from '@clerk/nextjs'
 import {
   ArrowDown,
   FileText,
@@ -25,7 +26,9 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { UploadToVercelStorage } from "@/lib/BlobStorage";
+import { createClerkSupabaseClient, createSupabaseClientInstance } from "@/lib/util/supabaseClient.ts";
+import { UploadToSupabaseBucket } from "@/lib/BlobStorage";
+
 
 type UploadSection =
   | "document"
@@ -52,11 +55,10 @@ const Chip: React.FC<ChipProps> = ({
 }) => (
   <button
     onClick={onClick}
-    className={`flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-      isActive
-        ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
-        : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-    }`}
+    className={`flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${isActive
+      ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+      : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+      }`}
   >
     <Icon className="w-4 h-4 mr-1" />
     {label}
@@ -65,6 +67,8 @@ const Chip: React.FC<ChipProps> = ({
 
 export default function DiverseFileUploadWithChips() {
   const router = useRouter();
+  const { session } = useSession()
+  const { user } = useUser()
   const [uploading, setUploading] = useState(false);
   const [url, setUrl] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -102,7 +106,12 @@ export default function DiverseFileUploadWithChips() {
   const uploadFile = async (file: File) => {
     try {
       setUploading(true);
-      const { data, success } = await UploadToVercelStorage(file);
+      const client = createClerkSupabaseClient(session);
+      if (!user?.id) {
+        throw new Error("User ID is undefined");
+      }
+      const { data, success } = await UploadToSupabaseBucket(file, client, user.id);
+      console.log("Upload successful", data);
       const response = await fetch("/api/create-chat", {
         method: "POST",
         headers: {
@@ -240,9 +249,8 @@ export default function DiverseFileUploadWithChips() {
             <button
               type="submit"
               disabled={uploading || !url}
-              className={`w-full h-12 text-base flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                uploading || !url ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`w-full h-12 text-base flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${uploading || !url ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {uploading ? (
                 <>
@@ -290,9 +298,8 @@ export default function DiverseFileUploadWithChips() {
   const renderDocumentSection = () => (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer ${
-        isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
-      }`}
+      className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
+        }`}
     >
       <input {...getInputProps()} />
       {uploading ? (

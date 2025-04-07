@@ -1,5 +1,5 @@
 import { downloadFromURL } from "./parsing/DownloadFromVercel";
-import getChunkedDocsFromPDF from "./parsing/Pdfloader";
+import { createClerkSupabaseClient, createClerkSupabaseServer, createSupabaseServerInstance } from "@/lib/util/supabaseClient.ts";
 import {
   getChunkedDocsFromSource,
   getChunkedDocsFromUnstructured,
@@ -13,18 +13,22 @@ import fs from "fs";
 export const getSupabaseClient = () => {
   const client = createClient(
     process.env.SUPABASE_URL ?? "",
-    process.env.SUPABASE_PRIVATE_KEY ?? "",
+    process.env.SUPABASE_PRIVATE_KEY ?? ""
   );
   return client;
 };
 export async function loadDocsintoVectorDatabase(
   file_url: string,
   file_type: string,
+  token: any
 ) {
   console.log("Supabase VectorBase ------------------------------------>");
+
+  const client = createClerkSupabaseServer(token);
+
   //  1. obtain the pdf -> downlaod and read from pdf
   console.log("downloading Docs into file system");
-  const localFilePath = await downloadFromURL(file_url, file_type);
+  const localFilePath = await downloadFromURL(file_url, file_type, client);
   console.log("file downloaded at ", localFilePath, file_type);
 
   try {
@@ -35,7 +39,7 @@ export async function loadDocsintoVectorDatabase(
     ) {
       fileContent = await getChunkedDocsFromUnstructured(localFilePath);
     } else {
-      fileContent = await getChunkedDocsFromPDF(localFilePath);
+      fileContent = await getChunkedDocsFromSource(localFilePath);
     }
 
     // const fileContent = await getChunkedDocsFromUnstructured(localFilePath);
@@ -43,7 +47,7 @@ export async function loadDocsintoVectorDatabase(
       throw new Error("Error processing file content");
     }
     console.log("File Content:", fileContent);
-    const client = getSupabaseClient();
+
     const vectorStore = await getVectorStore(fileContent, client);
     console.log("Vector Store:", vectorStore);
     fs.unlink(localFilePath, (err) => {
@@ -74,7 +78,7 @@ async function getVectorStore(fileContent: any, client: any) {
         client,
         tableName: "documents",
         queryName: "match_documents",
-      },
+      }
     );
     return vectorStore;
   } catch (error) {

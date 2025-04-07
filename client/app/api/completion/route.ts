@@ -1,4 +1,3 @@
-import { streamText, StreamData } from "ai";
 import { TaskType } from "@google/generative-ai";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
@@ -8,9 +7,10 @@ import { Googlemodel } from "@/lib/rag/model";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createMessage } from "@/lib/actions/message.action";
 import { Document } from "@langchain/core/documents";
-import { condenseQuestionPrompt } from "@/lib/rag/prompts";
+import { condenseQuestionPrompt, answerPrompt } from "@/lib/rag/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { VercelChatMessage } from "@/types/chat";
+import { LangChainAdapter } from "ai";
 
 const formatVercelMessages = (chatHistory: VercelChatMessage[]) => {
   const formattedDialogueTurns = chatHistory.map((message) => {
@@ -36,10 +36,10 @@ const groq = createOpenAI({
 
 export async function POST(req: Request) {
   const body = await req.json();
-  console.log("body", body);
+
   const messages = body.messages ?? [];
   const { source, chatId, userId } = body;
-  console.log("source", source, "user", userId, "chat", chatId);
+
   const previousMessages = messages.slice(0, -1);
   const currentMessageContent = messages[messages.length - 1].content;
   await createMessage({
@@ -48,7 +48,6 @@ export async function POST(req: Request) {
     role: "user",
     userId: userId,
   });
-  console.log(messages);
 
   //Intializing Supabase Client
   const client = createClient(
@@ -70,11 +69,11 @@ export async function POST(req: Request) {
     }
   );
 
-  //
-  const history = formatVercelMessages(messages);
+  console.log("📝 Previous Messages:", previousMessages);
+
   const standaloneQuestionChain = RunnableSequence.from([
     {
-      chat_history: (input) => input.history,
+      chat_history: (input) => input.chat_history,
       question: (input) => input.question,
     },
 
@@ -88,17 +87,14 @@ export async function POST(req: Request) {
     resolveWithDocuments = resolve;
   });
   // Use standaloneQuestionChain to refine the current question
-  const refinedQuestion = await standaloneQuestionChain.invoke({
-    question: currentMessageContent,
-    history,
-  });
-  console.log("Refined Question:", refinedQuestion);
+
+  console.log(" 🛠️  Generated refined question.");
   const retriever = vectorstore.asRetriever({
     filter: { source: source },
     callbacks: [
       {
         handleRetrieverEnd(documents) {
-          console.log("documents scanned", documents, "for", source);
+          console.log(" 📄 Retrieved relevant documents.");
           resolveWithDocuments(documents);
           //   resolveWithDocuments(documents);
         },
@@ -106,39 +102,35 @@ export async function POST(req: Request) {
     ],
   });
   const retrievalChain = retriever.pipe(combineDocumentsFn);
+  const answerChain = RunnableSequence.from([
+    {
+      context: RunnableSequence.from([
+        (input) => input.question,
+        retrievalChain,
+      ]),
+      chat_history: (input) => input.chat_history,
+      question: (input) => input.question,
+    },
+    answerPrompt,
+    Googlemodel,
+  ]);
 
-  const context = await retriever
-    .pipe(combineDocumentsFn)
-    .invoke(refinedQuestion);
+  console.log(" 📌 Context constructed from document chunks.");
 
-  const prompt = {
-    role: "user",
-    content: `
-You are an AI assistant designed to answer questions based on uploaded documents and provided context.  
+  const conversationalRetrievalQAChain = RunnableSequence.from([
+    {
+      question: standaloneQuestionChain,
+      chat_history: (input) => input.chat_history,
+    },
+    answerChain,
+    new StringOutputParser(),
+  ]);
 
-START CONTEXT BLOCK  
-${context}  
-END OF CONTEXT BLOCK  
+  const stream = await conversationalRetrievalQAChain.stream({
+    question: currentMessageContent,
+    chat_history: formatVercelMessages(previousMessages),
+  });
 
-Use the information in the CONTEXT BLOCK to provide accurate and concise answers.  
-If the context does not contain the answer, respond: "I'm sorry, but I don't have the information to answer that question based on the provided documents."  
-
-Do not invent information outside the provided context. Focus entirely on delivering precise responses based on the given documents.  
-`,
-  };
-
-  // const modifiedMessages = messages.map((message: any, index: any) => {
-  //   if (index === messages.length - 1) {
-  //     return {
-  //       ...message,
-  //       role: prompt.role, // Modify the role of the last message
-  //       content: `  ${prompt.content}`, // Replace the content with the provided prompt
-  //     };
-  //   }
-  //   return message; // Return other messages as they are
-  // });
-
-  const data = new StreamData();
   const documents = await documentPromise;
   const serializedSources = Buffer.from(
     JSON.stringify(
@@ -150,42 +142,36 @@ Do not invent information outside the provided context. Focus entirely on delive
       })
     )
   ).toString("base64");
+  console.log(" 🚀 Stream Text function started generating response");
 
-  // Append additional data
-  data.append({
-    messageindex: (previousMessages.length + 1).toString(),
-    sources: serializedSources,
-  });
-  const result = await streamText({
-    model: groq("llama3-8b-8192"),
-    system: "You are a helpful assistant.",
-    messages: [
-      prompt,
-      ...messages.filter((message: any) => message.role === "user"),
-    ],
-
-    async onFinish({ text, toolCalls, toolResults, finishReason, usage }) {
-      data.close();
-      console.log("output", text);
-      await createMessage({
-        chatId: chatId,
-        content: text,
-        role: "assistant",
-        userId: userId,
-      });
-      // return { text, toolCalls, finishReason, usage };
-      // your own logic, e.g. for saving the chat history or recording usage
+  const options = {
+    callbacks: {
+      onStart: async () => {
+        console.log("🟢 Stream started");
+      },
+      onToken: async (token: string) => {
+        console.log("🔤 Token received:", token);
+      },
+      onCompletion: async (completion: string) => {
+        console.log("✨ Completion received:", completion);
+      },
+      onFinal: async (completion: string) => {
+        console.log("🏁 Stream finished. Final completion:", completion);
+        await createMessage({
+          chatId: chatId,
+          content: completion,
+          role: "assistant",
+          userId: userId,
+        });
+      },
     },
-  });
-
-  return result.toDataStreamResponse({
     init: {
       headers: {
         messageindex: (previousMessages.length + 1).toString(),
-        sources: serializedSources, // Pass the source here
+        sources: serializedSources,
       },
     },
+  };
 
-    data,
-  });
+  return LangChainAdapter.toDataStreamResponse(stream, options);
 }

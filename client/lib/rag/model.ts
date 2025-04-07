@@ -1,7 +1,7 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 export const Googlemodel = new ChatGoogleGenerativeAI({
-  model: "gemini-pro",
+  model: "gemini-1.5-flash",
   maxOutputTokens: 2048,
   safetySettings: [
     {

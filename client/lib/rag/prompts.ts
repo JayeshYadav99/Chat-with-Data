@@ -1,12 +1,37 @@
 import { PromptTemplate } from "@langchain/core/prompts";
-const CONDENSE_QUESTION_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language(English).
+const CONDENSE_QUESTION_TEMPLATE = `
+Rephrase the follow-up question as a standalone question in English.
+
+- Ensure the question retains its original intent.
+- If no chat_history is provided, assume minimal context and still generate a meaningful standalone question.
 
 <chat_history>
   {chat_history}
 </chat_history>
 
-Follow Up Input: {question}
+Follow Up question: {question}
 Standalone question:`;
 export const condenseQuestionPrompt = PromptTemplate.fromTemplate(
-  CONDENSE_QUESTION_TEMPLATE,
+  CONDENSE_QUESTION_TEMPLATE
 );
+
+//
+const ANSWER_TEMPLATE = `
+
+Provide a detailed and comprehensive answer to the question . Ensure that your response highlights important keywords and phrases by **bolding** them. The answer should be based on the context and chat history provided.
+
+<context>
+  {context}
+</context>
+
+<chat_history>
+  {chat_history}
+</chat_history>
+
+Question: {question}
+
+Detailed Response:
+
+`;
+
+export const answerPrompt = PromptTemplate.fromTemplate(ANSWER_TEMPLATE);
