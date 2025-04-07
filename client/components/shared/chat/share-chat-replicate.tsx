@@ -3,9 +3,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText } from "lucide-react";
 import { useToast } from "@/components/hooks/use-toast";
+import { ChatMessage } from "@/types/chat";
 
 interface SharedChatReplicationProps {
-  originalChat: any;
+  originalChat: ChatMessage;
 }
 
 export default function SharedChatReplication({

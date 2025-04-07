@@ -21,12 +21,12 @@ export function createClerkSupabaseClient(session: any) {
                     const clerkToken = await session?.getToken({
                         template: 'supabase',
                     })
-                    console.log('clerkToken', clerkToken)
+
 
                     // Insert the Clerk Supabase token into the headers
                     const headers = new Headers(options?.headers)
                     headers.set('Authorization', `Bearer ${clerkToken}`)
-                    console.log('headers', headers)
+
                     // Call the default fetch
                     return fetch(url, {
                         ...options,

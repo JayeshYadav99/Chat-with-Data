@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getChatsByUserId } from "@/lib/actions/chat.action";
 import ChatUI from "@/components/shared/chat/chat-ui";
-import { ChatResponse } from "@/types/chat";
+import { ChatResponse, ChatMessage } from "@/types/chat";
+
+
 
 export const metadata: Metadata = {
   title: "Chats",
@@ -33,18 +35,18 @@ const Page = async ({ params: { id } }: Props) => {
 
   if (
     !chats ||
-    !chats.find((chat: any) => chat._id.toString() === id.toString())
+    !chats.find((chat: ChatMessage) => chat._id.toString() === id.toString())
   ) {
     return redirect("/");
   }
 
   const currentChat = chats.find(
-    (chat: any) => chat._id.toString() === id.toString()
+    (chat: ChatMessage) => chat._id.toString() === id.toString()
   );
 
   return (
     <div>
-      <ChatUI chats={chats} currentChat={currentChat} isPdfVisible={false} />
+      <ChatUI chats={chats} currentChat={currentChat} />
     </div>
   );
 };

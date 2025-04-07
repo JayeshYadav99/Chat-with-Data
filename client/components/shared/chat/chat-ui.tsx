@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import ChatSidebar from "@/components/shared/chat/chat-sidebar";
 import PdfViewer from "@/components/shared/chat/pdf-viewer";
 import ChatPanel from "@/components/shared/chat/chat-panel";
-const ChatUI = ({ chats, currentChat }: any) => {
+import { ChatMessage } from "@/types/chat";
+const ChatUI = ({ chats, currentChat }: { chats: ChatMessage[]; currentChat: ChatMessage }) => {
   const [isPdfVisible, setPdfVisible] = useState(false);
   const isPdfSource = currentChat?.source?.endsWith(".pdf");
   const handleSelectPdf = () => {
@@ -21,9 +22,8 @@ const ChatUI = ({ chats, currentChat }: any) => {
         />
 
         <main
-          className={`flex ${
-            isPdfVisible ? "w-3/4" : "w-full"
-          } transition-all duration-300`}
+          className={`flex ${isPdfVisible ? "w-3/4" : "w-full"
+            } transition-all duration-300`}
         >
           <motion.div
             className="flex"
@@ -50,9 +50,8 @@ const ChatUI = ({ chats, currentChat }: any) => {
           </motion.div>
 
           <div
-            className={`${
-              isPdfVisible ? "w-1/2" : "w-full"
-            }  p-2 h-screen overflow-hidden`}
+            className={`${isPdfVisible ? "w-1/2" : "w-full"
+              }  p-2 h-screen overflow-hidden`}
           >
             <ChatPanel
               chatSource={currentChat?.source}

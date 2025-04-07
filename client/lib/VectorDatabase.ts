@@ -1,5 +1,5 @@
 import { downloadFromURL } from "./parsing/DownloadFromVercel";
-import { createClerkSupabaseClient, createClerkSupabaseServer, createSupabaseServerInstance } from "@/lib/util/supabaseClient.ts";
+import { createClerkSupabaseServer } from "@/lib/util/supabaseClient";
 import {
   getChunkedDocsFromSource,
   getChunkedDocsFromUnstructured,

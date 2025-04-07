@@ -11,10 +11,11 @@ import { getMessagesForChatId } from "@/lib/actions/message.action";
 import ShareChatModal from "../modal/ShareChatModal";
 import SharedChatReplication from "./share-chat-replicate";
 import { skeletonMessages } from "@/utils";
+import { ChatMessage } from "@/types/chat";
 interface Props {
   chatSource: string;
-  currentChat: any;
-  isShare: any;
+  currentChat: ChatMessage;
+  isShare: boolean;
 }
 
 export default function ChatInterface({
@@ -69,7 +70,7 @@ export default function ChatInterface({
   };
   const resetChat = async () => {
     try {
-      const response = await clearMessages(currentChat._id);
+      const response = await clearMessages(currentChat._id.toString());
       if (response.success) {
         toast({
           title: "Chat Cleared Successfully",
@@ -94,7 +95,7 @@ export default function ChatInterface({
     const fetchMessages = async () => {
       setIsLoadingMessages(true);
       try {
-        const response = await getMessagesForChatId(currentChat._id);
+        const response = await getMessagesForChatId(currentChat._id.toString());
         if (response.success) {
           setInitialMessages(response.messages);
         } else {
@@ -126,7 +127,7 @@ export default function ChatInterface({
               <RefreshCw className="mr-2 h-4 w-4 text-green-500" />
               Reset Chat
             </Button>
-            <ShareChatModal chatId={currentChat._id} messages={messages} />
+            <ShareChatModal chatId={currentChat._id.toString()} messages={messages} />
           </>
         ) : (
           <></>
@@ -138,22 +139,22 @@ export default function ChatInterface({
       >
         {isLoadingMessages
           ? skeletonMessages.map((m) => (
-              <ChatMessageBubble
-                key={m.id}
-                message={m}
-                aiEmoji="🤖"
-                sources={[]}
-                isLoading={true}
-              ></ChatMessageBubble>
-            ))
+            <ChatMessageBubble
+              key={m.id}
+              message={m}
+              aiEmoji="🤖"
+              sources={[]}
+              isLoading={true}
+            ></ChatMessageBubble>
+          ))
           : [...messages].map((m, i) => (
-              <ChatMessageBubble
-                key={m.id}
-                message={m}
-                aiEmoji="🤖"
-                sources={sourcesForMessages[i.toString()]}
-              />
-            ))}
+            <ChatMessageBubble
+              key={m.id}
+              message={m}
+              aiEmoji="🤖"
+              sources={sourcesForMessages[i.toString()]}
+            />
+          ))}
       </div>
 
       {!isShare ? (

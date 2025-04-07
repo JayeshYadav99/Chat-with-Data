@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { createClerkSupabaseClient, createSupabaseClientInstance } from "@/lib/util/supabaseClient.ts";
+import { createClerkSupabaseClient, createSupabaseClientInstance } from "@/lib/util/supabaseClient";
 import { UploadToSupabaseBucket } from "@/lib/BlobStorage";
 
 
