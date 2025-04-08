@@ -148,10 +148,7 @@ export async function getSharedChatDetails(chatId: string) {
     }
 
     return {
-      source: chat.source,
-      fileKey: chat.fileKey,
-      pdfUrl: chat.pdfUrl,
-      pdfName: chat.pdfName,
+      ...chat
       // Add any other details you want to display
     };
   } catch (error) {

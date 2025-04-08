@@ -26,7 +26,7 @@ const Page = async ({ params: { id } }: Props) => {
 
   return (
     <div>
-      <ChatShare currentChat={currentChat} isPdfVisible={false} />
+      <ChatShare currentChat={currentChat} />
     </div>
   );
 };

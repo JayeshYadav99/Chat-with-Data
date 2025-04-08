@@ -45,11 +45,21 @@ export async function downloadFromURL(
   console.log("download data:", downloadedFile);
 
   return new Promise((resolve, reject) => {
-    const tempFilePath = path.join(
-      process.cwd(),
-      "public/assets",
-      `file_${Date.now().toString()}${fileExtension}`
-    );
+    var tempFilePath: string;
+    // Set the path based on the environment
+    if (process.env.NODE_ENV === 'development') {
+      tempFilePath = path.join(
+        process.cwd(),
+        "public/assets",
+        `file_${Date.now().toString()}${fileExtension}`
+      );
+    } else {
+      tempFilePath = path.join(
+        "/tmp",
+        `file_${Date.now().toString()}${fileExtension}`
+      );
+    }
+
 
     const fileStream = fs.createWriteStream(tempFilePath);
 
