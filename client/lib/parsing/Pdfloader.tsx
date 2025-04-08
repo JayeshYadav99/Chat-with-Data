@@ -63,8 +63,8 @@ export async function getChunkedDocsFromSource(PATH: string) {
         }),
       ".pdf": (path) => new PDFLoader(path),
       ".docx": (path) => new DocxLoader(path),
-      ".epub": (path) => new EPubLoader(path),
-      ".pptx": (path) => new PPTXLoader(path),
+
+
     });
     // const loader = new UnstructuredLoader(
     // PATH
@@ -82,9 +82,9 @@ export async function getChunkedDocsFromSource(PATH: string) {
     const cleanedDocs =
       extension === ".pdf"
         ? rawDocs.map((doc) => {
-            doc.pageContent = cleanText(doc.pageContent);
-            return doc;
-          })
+          doc.pageContent = cleanText(doc.pageContent);
+          return doc;
+        })
         : rawDocs;
 
     // const cleanedDocs =
@@ -130,9 +130,9 @@ export async function getChunkedDocsFromUnstructured(PATH: string) {
     const cleanedDocs =
       extension === ".pdf"
         ? enrichedDocs.map((doc) => {
-            doc.pageContent = cleanText(doc.pageContent);
-            return doc;
-          })
+          doc.pageContent = cleanText(doc.pageContent);
+          return doc;
+        })
         : enrichedDocs;
 
     // const cleanedDocs =

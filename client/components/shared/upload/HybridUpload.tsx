@@ -96,9 +96,8 @@ export default function DiverseFileUploadWithChips() {
       ],
       "text/csv": [".csv"],
       "text/plain": [".txt"], // Added support for .txt files
-      "application/epub+zip": [".epub"],
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-        [".pptx"],
+
+
     },
     maxFiles: 1,
   });
@@ -319,15 +318,14 @@ export default function DiverseFileUploadWithChips() {
             <FileText className="h-10 w-10 text-blue-500" />
             <FileSpreadsheet className="h-10 w-10 text-green-500" />
             <FileCode className="h-10 w-10 text-yellow-500" />
-            <BookOpen className="h-10 w-10 text-purple-500" />{" "}
-            {/* Add EPUB icon */}
-            <Presentation className="h-10 w-10 text-orange-500" />{" "}
+
+
             {/* Add PPT icon */}
           </div>
           <div>
             <p className="text-lg font-medium mb-2">Drop your document here</p>
             <p className="text-sm text-gray-500">
-              Supported formats: PDF, DOCX, XLSX, CSV, TXT ,EPUB ,PPTX
+              Supported formats: PDF, DOCX, XLSX, CSV, TXT
             </p>
             <p className="text-xs text-gray-400 mt-1">Max file size: 50MB</p>
           </div>
@@ -349,7 +347,7 @@ export default function DiverseFileUploadWithChips() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">
-        Upload Your Data in more than 9 file formats
+        Upload Your Data in various file format
       </h1>
 
       <div className="mb-6 flex flex-wrap gap-2 justify-center">
